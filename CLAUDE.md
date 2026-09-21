@@ -97,6 +97,7 @@ js/
   thresholds.js       default thresholds
   i18n.js  tts.js     strings + voice (F15)
   settings.js         F2 validation, Demo Mode
+  profile.js  contacts.js   pure rules for F3/F4 (unit-tested)  · pwa.js  SW registration + update bar
   ui/components.js    top bar, demo banner, buttons, EMERGENCY NOW
   screens/            one file per screen S1–S18
   tests/              face.js, speech.js, speech-worker.js, arm.js, eyes.js, balance.js

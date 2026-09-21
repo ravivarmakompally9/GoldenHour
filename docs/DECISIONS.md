@@ -54,10 +54,12 @@ are matched with digit boundaries — `(?<!\d)(\+91)?[6-9]\d{9}(?!\d)` — so lo
 URLs or IDs are not flagged. Unit tests never contain a literal mobile number; sample numbers are
 built at runtime (e.g. `"9" + "0".repeat(9)`).
 
-## D9 — Two small helper modules beyond the PRD folder list — SETTLED
+## D9 — Three small helper modules beyond the PRD folder list — SETTLED
 
 `js/profile.js` and `js/contacts.js` hold the pure rules for F3/F4 (required fields, max 5
-contacts, exactly one primary) so they can be unit-tested without a browser. The PRD's contract
+contacts, exactly one primary) so they can be unit-tested without a browser. `js/pwa.js` registers
+the service worker and drives the "Update available" bar. `js/screens/placeholder.js` is a
+temporary honest "not built yet" screen, deleted when M2/M5 replace its routes. The PRD's contract
 modules and signatures are unchanged; the screens stay in `js/screens/`. `package.json` exists only
 to mark `.js` files as ES modules for `node --test` — it has no dependencies and no build step.
 
@@ -66,3 +68,22 @@ to mark `.js` files as ES modules for `node --test` — it has no dependencies a
 PRD F2 blocks 108, 112, 100, 101, 102 and every 3–4 digit number. `validatePhone()` blocks every
 number of 6 digits or fewer (5–6 digit helplines exist too). Wider blocking cannot break a valid
 10-digit mobile, so it is the safer reading.
+
+## D11 — "Continue in the browser" on the install page — SETTLED
+
+PRD S1 lists only the Install button and fallback text. We added a quiet "Continue in the browser"
+button so the app can be tested on localhost and used on a phone where install is blocked. It is
+remembered per tab (sessionStorage), so the install page returns on the next visit. Installed
+(standalone) launches never see S1.
+
+## D12 — Consent tick lives on the Medical Profile screen — SETTLED
+
+PRD Section 18 requires the privacy sentence and the tick "The person being protected agrees to
+this setup." during Setup but names no screen. It is on S4 (Medical profile), next to the health
+data it covers, and the profile cannot be saved without it. Stored as `gh_profile.consent`.
+
+## D13 — Location permission is asked in M2, not M1 — SETTLED
+
+F12 says to ask for location during Setup. `location.js` belongs to WS4 (M2), so the Setup
+permission prompts (camera, microphone, location, each with a one-line reason) arrive with the
+features that use them.
