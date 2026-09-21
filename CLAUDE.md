@@ -43,8 +43,9 @@ Open questions and resolved conflicts live in `docs/DECISIONS.md` — read it to
 8. Never fake results. No hardcoded/simulated outputs in the app. Every result comes from real
    camera, microphone or sensor data. Synthetic data only inside unit tests.
 9. At most one LLM request per completed check; none during calibration runs.
-10. Show the disclaimer: "A screening aid that prompts people to seek emergency care. Not a
-    diagnostic device." (app, Doctor Card footer "Screening aid only, not a diagnosis").
+10. Show the exact disclaimer from PRD §18 on the Home screen and Doctor Card: "GoldenHour is a
+    screening aid that prompts people to seek emergency care. It is not a diagnostic device and
+    does not replace a doctor." The app never recommends any medicine, including aspirin.
 11. Balance test (P2) only with someone standing beside the patient. No hospital labelled
     stroke-ready unless the team verified it.
 
@@ -88,7 +89,7 @@ vendor/               mediapipe/ (bundle + wasm/), chart.umd.js, qrcode.js,
 data/hospitals.json   F19 (verified list only)
 i18n/                 en.json, hi.json, te.json
 dev/                  face.html, arm.html, speech.html harness pages
-docs/                 PRD.md, PRD.pdf, DECISIONS.md
+docs/                 PRD.md (single source of truth), DECISIONS.md
 test/                 node --test unit tests (pure logic only)
 js/
   app.js              router, screen switching, current session
@@ -134,5 +135,10 @@ Storage keys: `gh_settings`, `gh_key_gemini`, `gh_key_openrouter`, `gh_profile`,
 - PRD unclear or self-conflicting → pick the safest option, record it in `docs/DECISIONS.md` with
   the reason, and tell the owner.
 - Run `node --test test/` before every commit that touches logic.
+- Never write a literal mobile number anywhere, including unit tests — build samples at runtime
+  (`"9" + "0".repeat(9)`). `test/guard.test.js` fails the build on `tel:108`-style links or
+  phone-like numbers in app code.
+- Deploy: GitHub Pages from `main`, root folder. Test a branch without deploying via
+  `python3 -m http.server 8080` + chrome://inspect port forwarding (README).
 - End of each milestone, report: what was built, which PRD acceptance criteria pass, phone test
   checklist (incl. what to look at in `chrome://inspect`), known issues, what comes next.

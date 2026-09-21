@@ -3,31 +3,17 @@
 When the PRD is unclear, incomplete or self-conflicting, we pick the safest option and record it
 here. Newest at the bottom. Status: OPEN (needs owner input) or SETTLED.
 
-## D1 — Supplied PRD PDF ends at page 45 (Sections 17–21 missing) — OPEN
+## D1 — First PRD PDF was truncated at page 45 — SETTLED (2026-09-21)
 
-**Found:** The PDF given on 2026-09-21 stops part-way through Section 16 (constraint C26).
-Missing: Section 17, Section 18 (disclaimer wording), Section 19 (calibration, threshold table,
-phone test checklists), Section 20 (demo/submission), Section 21 (roadmap/on-site plan) and the
-"Setup and deployment steps (Part 1)" referenced for Section 15.
+The first PDF stopped inside Section 16. The owner then supplied the complete Markdown PRD
+(Sections 1–22), now saved as `docs/PRD.md` — the single source of truth. `docs/PRD.pdf` was
+deleted. We use: the exact disclaimer from Section 18, the threshold table from Section 19, and
+the "Setup and deployment steps (Part 1)" at the end of Section 15.
 
-**Safest option taken until the full PRD arrives:**
-- Thresholds in `js/thresholds.js` use the "starting values" given inside F7, F8, F9, F17, F18
-  (these are what Section 19 is said to collect).
-- Disclaimer text uses the mandatory wording from Section 6: "A screening aid that prompts people
-  to seek emergency care. Not a diagnostic device." and the Doctor Card footer from F13:
-  "Screening aid only, not a diagnosis".
-- Deployment follows F1 + the Section 15 working rules: GitHub Pages from `main`, relative paths,
-  bump the `sw.js` cache version on every deploy.
-- Manual phone checklists are derived from each feature's acceptance criteria.
+## D2 — Hindi and Telugu test sentences — SETTLED (2026-09-21)
 
-**Owner action:** re-export the full PDF (or paste Sections 17–21) so this can be checked.
-
-## D2 — Hindi and Telugu test sentences not recoverable from the PDF text — OPEN
-
-**Found:** The F8 sentence table and the S2 language-button labels lost their Hindi/Telugu glyphs
-in text extraction. **Safest option:** language buttons use the standard native names (हिन्दी,
-తెలుగు). The speech test sentences are needed only in M5 (WS3); the owner must supply the exact
-Hindi (6 words) and Telugu (5 words) sentences. We will not invent medical test sentences.
+The sentences are in the F8 table of `docs/PRD.md` and are used as written. The Hindi and Telugu
+language files keep the "NEEDS NATIVE SPEAKER REVIEW" note until a native speaker signs off (C17).
 
 ## D3 — Repository name vs PRD folder name — SETTLED
 
@@ -46,22 +32,24 @@ PRD §13 says Reset deletes every `gh_` key. `storage.clearAll()` removes only k
 `gh_` (not `localStorage.clear()`), so it cannot wipe the Transformers.js model cache bookkeeping
 or anything else on the same GitHub Pages origin.
 
-## D6 — Demo numbers missing → CALL button must not dial anything — SETTLED
+## D6 — Demo numbers missing → CALL button must not dial anything — SETTLED (owner approved)
 
 If no demo emergency number has been saved yet, `callLink(settings)` returns `null` and the CALL
-button opens Settings with the message to enter a teammate's mobile. It never falls back to a real
-emergency number (108 rule). The Home checklist shows "Demo numbers: not set" until fixed.
+button opens Settings with the message "Add a demo emergency number to enable calling." It never
+dials anything and never falls back to a real emergency number (108 rule). The Home checklist
+shows "Demo numbers: not set" until fixed.
 
-## D7 — F9 arm "no baseline" rule is cut off in the PDF text — OPEN
+## D7 — F9 arm "no baseline" rule — SETTLED (2026-09-21)
 
-**Found:** The no-baseline threshold cell reads "Either arm A > 12°; or" and then stops (PDF page
-23). A second condition (probably a left–right difference limit) was lost in extraction.
-**Safest option:** `thresholds.js` ships `arm.generalMaxA = 12` and also a general left–right
-difference limit `arm.generalMaxDiff = 6` (the same 6° margin the baseline rule uses). Adding the
-extra check can only create more alerts, never fewer, which matches the PRD's "lean toward false
-alarms" rule. **Owner action:** read page 23 of docs/PRD.pdf and confirm the real second condition.
+The cell was incomplete in the PRD itself; the owner fixed it. Rule: either arm `A` > 12°, OR the
+left–right difference > 8°. `thresholds.js` ships `arm.generalMaxA = 12` and
+`arm.generalMaxDiff = 8` (the interim 6° is gone). Matches the Section 19 table.
 
-## D8 — PRD docs mention `tel:108`; the code must not — SETTLED
+## D8 — Guard test scope — SETTLED (owner specified)
 
-`docs/PRD.md` describes the Part 2 production link, so the string appears in docs. The guard unit
-test scans app code only (`index.html`, `sw.js`, `js/`, `dev/`, `i18n/`, `css/`), where it is banned.
+`docs/PRD.md` legitimately mentions `tel:108` when describing Part 2, so docs are not scanned.
+The guard unit test scans app code only: `index.html`, `sw.js`, `manifest.json`, `css/`, `js/`,
+`ui/`, `i18n/`, `dev/`. It excludes `docs/`, `vendor/`, `models/` and unit tests. Phone numbers
+are matched with digit boundaries — `(?<!\d)(\+91)?[6-9]\d{9}(?!\d)` — so long numbers inside
+URLs or IDs are not flagged. Unit tests never contain a literal mobile number; sample numbers are
+built at runtime (e.g. `"9" + "0".repeat(9)`).
