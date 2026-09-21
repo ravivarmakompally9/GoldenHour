@@ -1,22 +1,9 @@
-/* GoldenHour global UI rules (PRD Section 9).
+/* GoldenHour global UI rules (PRD Section 9). Colours and sizes come from tokens.css.
    Designed for a scared helper holding the phone in one hand:
    - body text >= 20px, headings >= 28px, test instructions >= 24px
    - buttons >= 56px tall, touch targets >= 48x48px
    - high contrast; colour is never the only signal (always a word too) */
 
-:root {
-  --red: #d32f2f;        /* emergency */
-  --red-dark: #9a1c1c;
-  --green: #2e7d32;      /* normal */
-  --amber: #ffb300;      /* warning (always with black text) */
-  --yellow: #ffeb3b;     /* demo banner */
-  --ink: #111111;
-  --muted: #444444;
-  --line: #9e9e9e;
-  --bg: #ffffff;
-  --panel: #f4f4f4;
-  --focus: #0b57d0;
-}
 
 * { box-sizing: border-box; }
 
@@ -140,6 +127,8 @@ input[type="text"], input[type="tel"], input[type="number"], input[type="passwor
 }
 textarea { min-height: 96px; resize: vertical; }
 .has-error input, .has-error select, .has-error textarea { border-color: var(--red); border-width: 3px; }
+
+fieldset.choice-group { border: 0; padding: 0; margin: 0; min-width: 0; }
 
 /* Choice pills: big radio buttons (Yes / No / Unknown and similar). */
 .choices { display: flex; flex-wrap: wrap; gap: 8px; }
