@@ -28,16 +28,19 @@ Branches `ws2-arm` + `ws4-alerts`.
 - [ ] **Owner:** run the harness on a real phone (steady arm, slow sag, palm rotation, drop,
       "cannot do", phone left on a table) and report the numbers + samples/s.
 - [x] Add `chart.js` (pinned) for the live tilt graph; record in `docs/VERSIONS.md`.
-- [ ] `src/lib/decision.js`: `decide()` + unit tests for R1–R8.
-- [ ] `src/lib/alerts.js`: countdown (pause/resume/cancel), `buildMessage`, `callLink` (demo number
+- [x] `src/lib/decision.js`: `decide()` + unit tests for R1–R8.
+- [x] `src/lib/alerts.js`: countdown (pause/resume/cancel), `buildMessage`, `callLink` (demo number
       only, `null` when unset), `smsLink`, `waLink` + unit tests.
-- [ ] `src/lib/location.js`: `getLocation()` with last-known fallback; ask permission during Setup.
-- [ ] Session store (`gh_sessions`, last 20).
-- [ ] Screens: S8 Who is tested, S9 Last seen normal (F6), S12 Arm test, S13 HIGH ALERT,
+- [x] `src/lib/location.js`: `getLocation()` with last-known fallback; ask permission during Setup.
+- [x] Session store (`gh_sessions`, last 20).
+- [x] Screens: S8 Who is tested, S9 Last seen normal (F6), S12 Arm test, S13 HIGH ALERT,
       S14 No clear signs — **solid high-contrast surfaces, not glass** (D19).
-- [ ] Check top bar on every check screen: progress + CALL + EMERGENCY NOW. Wake Lock.
-- [ ] Replace the "Not built yet" placeholder for the check route.
-- [ ] Measure sensor sample rate with the animated background; pause orbs during tests if needed.
+- [x] Check top bar on every check screen: progress + CALL + EMERGENCY NOW. Wake Lock.
+- [x] Replace the "Not built yet" placeholder for the check route.
+- [x] Animated background is removed on check/alert/result screens (solid surfaces).
+- [ ] **Owner:** M2 phone checklist (see the M2 report) — real sensors, dialer, SMS app, WhatsApp,
+      location on/off, airplane mode, returning from the dialer.
+- [ ] **Owner:** OK → merge `ws2-arm` + `ws4-alerts` into `main`, push, deploy.
 
 ## 2. M3 — Face test (`ws1-face`)
 

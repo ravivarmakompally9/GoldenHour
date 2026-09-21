@@ -231,5 +231,6 @@
   "home.check.locationHint": "केवल परिवार को भेजे जाने वाले अलर्ट संदेश में इस्तेमाल होती है।",
   "home.status.allowed": "अनुमति है",
   "home.status.blocked": "ब्लॉक है",
-  "home.location.blockedHelp": "लोकेशन ब्लॉक है। इस ऐप के लिए Chrome की साइट सेटिंग्स में अनुमति दें।"
+  "home.location.blockedHelp": "लोकेशन ब्लॉक है। इस ऐप के लिए Chrome की साइट सेटिंग्स में अनुमति दें।",
+  "alert.voice": "स्ट्रोक हो सकता है। अभी 108 पर कॉल करें।"
 }

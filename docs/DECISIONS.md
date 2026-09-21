@@ -203,3 +203,26 @@ instructions are rendered by the screen from i18n, so modules stay free of React
 
 `ws2-arm` is tested alone on the phone via the `dev/arm.html` harness, then `ws4-alerts` is built
 on top; one combined merge + deploy at the end of M2.
+
+## D26 — CALL and EMERGENCY NOW sit in a bar fixed to the bottom of every check screen — SETTLED
+
+PRD §9 puts them in a TOP bar. The yellow DEMO banner already occupies the top, arm instructions
+are long enough to scroll, and a panicking helper holds the phone one-handed. A bar fixed to the
+BOTTOM is always in view (it never scrolls away) and within thumb reach. Progress ("Step 2 of 3")
+stays at the top of the content. HIGH ALERT (S13) has no bar: its CALL button is the biggest thing
+on the screen. Same requirement (C11: visible on every check screen), different position.
+
+## D27 — At countdown 0 the app tries to open the SMS app AND always shows "Send family alert now" — SETTLED
+
+PRD F11: "At 0 the SMS app opens". Some Android/Chrome versions refuse to open another app
+without a fresh tap (the last tap may be 10+ seconds old). So at 0 we try to open the pre-filled
+SMS, and in every case show the large "Send family alert now" button (which the PRD already
+requires when returning to the app). The alert state (`pending | fired | cancelled`) is saved in
+the session, so a reload after returning from the dialer/SMS app never restarts the countdown.
+Links are recorded as "opened", never "sent": a PWA cannot know whether Send was pressed.
+
+## D28 — Sessions carry a local `person` snapshot and `familyAlert` state — SETTLED
+
+Two fields beyond the PRD §13 Session shape: `person: { name, age }` (for the SMS and, later, the
+Doctor Card; it is NEVER part of the LLM payload — C4) and `familyAlert`. A session that already
+has a decision is finished and is never reused for a new check or a later EMERGENCY NOW.

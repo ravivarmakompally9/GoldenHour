@@ -231,5 +231,6 @@
   "home.check.locationHint": "Used only inside the family alert message.",
   "home.status.allowed": "ALLOWED",
   "home.status.blocked": "BLOCKED",
-  "home.location.blockedHelp": "Location is blocked. Allow it in Chrome's site settings for this app."
+  "home.location.blockedHelp": "Location is blocked. Allow it in Chrome's site settings for this app.",
+  "alert.voice": "Possible stroke. Call 108 now."
 }

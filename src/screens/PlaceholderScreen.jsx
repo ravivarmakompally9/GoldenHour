@@ -1,4 +1,4 @@
-// Placeholder for screens that arrive in later milestones (#/soon/check, #/soon/baseline).
+// Placeholder for screens that arrive in later milestones (now only #/soon/baseline, until M5).
 //
 // SAFETY RULE 8 ("never fake results"): until the real emergency check exists, the buttons lead
 // here and the screen says plainly that nothing was tested and no alert was sent. It also tells a

@@ -6,12 +6,15 @@ import { createRoot } from "react-dom/client";
 import "./css/tokens.css";
 import "./css/styles.css";
 import { AppStateProvider } from "./state/AppState.jsx";
+import { CheckProvider } from "./state/CheckState.jsx";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AppStateProvider>
-      <App />
+      <CheckProvider>
+        <App />
+      </CheckProvider>
     </AppStateProvider>
   </StrictMode>
 );

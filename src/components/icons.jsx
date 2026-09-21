@@ -34,6 +34,7 @@ export const IconPlus = () => <Svg><path d="M12 5v14M5 12h14" /></Svg>;
 export const IconCheck = () => <Svg><path d="M5 12.5l4.5 4.5L19 7.5" /></Svg>;
 export const IconTrash = () => <Svg><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Svg>;
 export const IconLock = () => <Svg><rect x="5" y="11" width="14" height="10" rx="2.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></Svg>;
+export const IconPin = () => <Svg><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></Svg>;
 export const IconInfo = () => <Svg><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.3" /></Svg>;
 
 /** The heartbeat line that draws itself inside the EMERGENCY CHECK hero. */

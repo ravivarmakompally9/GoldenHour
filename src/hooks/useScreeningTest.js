@@ -19,35 +19,37 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useScreeningTest(testModule) {
   const containerRef = useRef(null);
-  const runningRef = useRef(false);
+  // Each start() gets a number. A result is only accepted if its number is still the current one,
+  // so a late result from an aborted run (screen left, React StrictMode re-mount, EMERGENCY NOW)
+  // can never be mistaken for the result of the run on screen.
+  const currentRun = useRef(0);
   const [status, setStatus] = useState("idle");   // "idle" | "running" | "done" | "error"
   const [result, setResult] = useState(null);     // TestResult from the module, or null
   const [error, setError] = useState(null);
 
   const abort = useCallback(() => {
-    if (!runningRef.current) return;
-    runningRef.current = false;
+    if (currentRun.current === 0) return;
+    currentRun.current = 0;
     try { testModule.abort(); } catch (err) { console.warn("[test] abort failed", err); }
   }, [testModule]);
 
   const start = useCallback(async (options) => {
-    if (runningRef.current) return null;          // one run at a time
-    runningRef.current = true;
+    const runId = Date.now() + Math.random();
+    currentRun.current = runId;
     setStatus("running");
     setResult(null);
     setError(null);
     try {
       const testResult = await testModule.run({ ...options, container: containerRef.current });
-      if (!runningRef.current) return null;       // aborted or screen left: ignore a late result
+      if (currentRun.current !== runId) return null;   // aborted or replaced: ignore a late result
+      currentRun.current = 0;
       setResult(testResult);
       setStatus("done");
       return testResult;
     } catch (err) {
       console.error("[test] run failed", err);
-      if (runningRef.current) { setError(err); setStatus("error"); }
+      if (currentRun.current === runId) { currentRun.current = 0; setError(err); setStatus("error"); }
       return null;
-    } finally {
-      runningRef.current = false;
     }
   }, [testModule]);
 
