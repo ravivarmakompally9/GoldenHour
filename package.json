@@ -1,7 +1,25 @@
 {
   "name": "goldenhour",
   "private": true,
-  "description": "GoldenHour PWA. No dependencies and no build step; this file only tells Node that .js files are ES modules so `node --test` works.",
+  "version": "0.1.0",
+  "description": "GoldenHour — offline stroke-screening PWA (Part 1 prototype). Screening aid, not a diagnostic device.",
   "type": "module",
-  "scripts": { "test": "node --test" }
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "vite --host --port 8080",
+    "build": "vite build",
+    "preview": "vite preview --host --port 8080",
+    "test": "node --test",
+    "check": "node --test && vite build && node scripts/check-dist.mjs"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.1.1",
+    "vite": "8.3.0",
+    "vite-plugin-pwa": "1.3.0",
+    "workbox-window": "7.4.1"
+  }
 }
