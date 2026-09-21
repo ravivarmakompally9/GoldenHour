@@ -67,6 +67,17 @@ export default function InstallScreen() {
         </div>
       )}
 
+      {/* Manual route, always shown: Chrome sometimes never fires its install event (for example
+          when the site was opened from another app), and newer Chrome calls the menu item
+          "Add to Home screen". */}
+      <Card className="install-steps">
+        <strong>{t("install.manualTitle")}</strong>
+        <p>{t("install.manual1")}</p>
+        <p>{t("install.manual2")}</p>
+        <p>{t("install.manual3")}</p>
+        <p>{t("install.manual4")}</p>
+      </Card>
+
       <Button label={t("install.continueBrowser")} variant="quiet" onClick={continueInBrowser} />
       <p className="disclaimer">{t("app.disclaimer")}</p>
     </div>
