@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 import { useAppState } from "../state/AppState.jsx";
 import { useCheck } from "../state/CheckState.jsx";
 import { getLocation, locationPermission } from "../lib/location.js";
+import { isStandalone } from "../pwa/installPrompt.js";
+import { useInstallPrompt } from "../hooks/useInstallPrompt.js";
 import { isDemoReady } from "../lib/settings.js";
 import { getProfile, isProfileDone } from "../lib/profile.js";
 import { getContacts } from "../lib/contacts.js";
 import * as storage from "../lib/storage.js";
 import { navigate } from "../hooks/useHashRoute.js";
 import { Button, Card, EmergencyNowButton, StatusWord } from "../components/ui.jsx";
-import { IconChevron, IconPhone, IconPin, IconPulse, IconSettings, IconUser, IconUsers, IconWave } from "../components/icons.jsx";
+import { IconChevron, IconDownload, IconPhone, IconPin, IconPulse, IconSettings, IconUser, IconUsers, IconWave } from "../components/icons.jsx";
 
 /** One checklist row: icon bubble, label, status WORD, chevron. Tap to open. */
 function ChecklistRow({ icon, label, hint, statusText, done, onClick }) {
@@ -51,6 +53,13 @@ function ProgressRing({ done, total }) {
 export default function HomeScreen() {
   const { settings, t, toast } = useAppState();
   const { emergencyNow } = useCheck();
+  const { canInstall, installed, promptInstall } = useInstallPrompt();
+
+  // One tap if Chrome already offered the install; otherwise the install page explains the menu route.
+  async function install() {
+    const shown = canInstall ? await promptInstall() : false;
+    if (!shown) navigate("install");
+  }
   const [locationState, setLocationState] = useState("unknown");   // "granted" | "denied" | "prompt" | "unknown"
   useEffect(() => { locationPermission().then(setLocationState); }, []);
 
@@ -133,6 +142,21 @@ export default function HomeScreen() {
           />
         </ul>
       </Card>
+
+      {/* Running in a browser tab: keep offering Install. (Found on a real phone: after "Continue in
+          the browser" there was no way back to the install page.) Hidden once installed. */}
+      {!isStandalone() && !installed && (
+        <Card>
+          <div className="panel-row">
+            <IconDownload />
+            <div>
+              <strong>{t("home.install.title")}</strong>
+              <p className="muted small">{t("home.install.text")}</p>
+            </div>
+          </div>
+          <Button label={t("home.install.button")} icon={<IconDownload />} variant="primary" onClick={install} />
+        </Card>
+      )}
 
       {/* Required on the Home screen by PRD Section 18. */}
       <p className="disclaimer">{t("app.disclaimer")}</p>

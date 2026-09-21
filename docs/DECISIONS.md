@@ -249,3 +249,12 @@ fixed bottom bar. The button now comes straight after the instruction, each phas
 to the top, and a 4-step tracker (Place phone → Hold still → Eyes closed 10 s → Lower arm) plus
 live "Phone is flat / Arm is still" checks show what the app is waiting for. Results always list
 BOTH arms ("Left arm: not measured"), so a half-measured test is obvious.
+
+## D31 — Home keeps offering Install while the app runs in a browser tab — SETTLED (found on the owner's phone)
+
+After "Continue in the browser" (or when opened through a link ending in `#/home`) there was no
+way back to the install page, so the owner's phone never got the app installed. Home now shows an
+"Install GoldenHour on this phone" card whenever the app is NOT running standalone: one tap if
+Chrome's install event is available, otherwise it opens the install page, which now always lists
+the manual route (⋮ → "Add to Home screen" / "Install app" → Install). The card disappears once
+the app is installed and opened from its icon.

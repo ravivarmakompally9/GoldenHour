@@ -242,5 +242,13 @@
   "arm.check.steady": "Arm is still",
   "arm.notMeasured": "{side}: not measured",
   "arm.ok": "OK",
-  "arm.notYet": "NOT YET"
+  "arm.notYet": "NOT YET",
+  "home.install.title": "Install GoldenHour on this phone",
+  "home.install.text": "Opens full-screen from your home screen and works without internet.",
+  "home.install.button": "Install app",
+  "install.manualTitle": "If the Install button does nothing",
+  "install.manual1": "1. Make sure this page is open in Chrome.",
+  "install.manual2": "2. Tap the ⋮ menu at the top right.",
+  "install.manual3": "3. Tap \"Add to Home screen\" (or \"Install app\"), then Install.",
+  "install.manual4": "4. Open GoldenHour from the new icon on your home screen."
 }

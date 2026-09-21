@@ -242,5 +242,13 @@
   "arm.check.steady": "हाथ स्थिर है",
   "arm.notMeasured": "{side}: मापा नहीं गया",
   "arm.ok": "ठीक",
-  "arm.notYet": "अभी नहीं"
+  "arm.notYet": "अभी नहीं",
+  "home.install.title": "GoldenHour को इस फ़ोन में इंस्टॉल करें",
+  "home.install.text": "होम स्क्रीन से फ़ुल-स्क्रीन खुलता है और बिना इंटरनेट के चलता है।",
+  "home.install.button": "ऐप इंस्टॉल करें",
+  "install.manualTitle": "अगर इंस्टॉल बटन से कुछ न हो",
+  "install.manual1": "1. देख लें कि यह पेज Chrome में खुला है।",
+  "install.manual2": "2. ऊपर दाईं ओर ⋮ मेनू पर टैप करें।",
+  "install.manual3": "3. \"होम स्क्रीन पर जोड़ें\" (या \"ऐप इंस्टॉल करें\") चुनें, फिर इंस्टॉल दबाएँ।",
+  "install.manual4": "4. होम स्क्रीन पर बने नए आइकन से GoldenHour खोलें।"
 }

@@ -516,6 +516,8 @@ fieldset.choice-group { border: 0; padding: 0; margin-left: 0; margin-right: 0; 
 .install .pulse-line { margin: 0 auto; display: block; }
 .install .pulse-line path { stroke: var(--red); }
 .install .instruction { font-size: 22px; }
+.install-steps { text-align: left; }
+.install-steps p { margin: 6px 0 0; }
 .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .chip { padding: 6px 14px; border-radius: var(--radius-pill); background: var(--glass-strong); border: 1.5px solid var(--glass-border); font-size: 16px; font-weight: 700; }
 
