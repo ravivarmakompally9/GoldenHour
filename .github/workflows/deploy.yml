@@ -1,0 +1,59 @@
+# Build the PWA and publish dist/ to GitHub Pages on every push to main.
+# One-time repo setting: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci installs EXACTLY what package-lock.json pins (constraint C20).
+      - run: npm ci
+
+      # Unit tests include the guard test (no emergency tel: links, phone numbers or API keys).
+      # A failing test stops the deploy.
+      - run: npm test
+
+      # GitHub Pages paths are case-sensitive, so the base path is taken from the real repo name.
+      - run: npm run build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+
+      # Fails the deploy if any shipped file (model, WASM, font...) is missing from the offline cache.
+      - run: node scripts/check-dist.mjs
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

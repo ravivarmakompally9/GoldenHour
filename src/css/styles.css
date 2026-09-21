@@ -1,0 +1,537 @@
+/* GoldenHour global UI (PRD Section 9). All colours, sizes and timings come from tokens.css.
+   Designed for a scared helper holding the phone in one hand:
+   - body text >= 20px, headings >= 28px, test instructions >= 24px
+   - buttons >= 56px tall, touch targets >= 48x48px
+   - high contrast; colour is never the only signal (always a word too)
+   Performance note: backdrop-filter is expensive on mid-range phones, so only a few large
+   surfaces per screen are real glass (.glass cards, header buttons). Rows and inputs inside a
+   card are plain translucent fills with no blur of their own. */
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: var(--text-body);
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--bg-base);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1 { font-size: var(--text-h1); line-height: 1.15; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: var(--text-h2); line-height: 1.2; margin: 8px 0 0; font-weight: 800; letter-spacing: -0.02em; }
+p { margin: 8px 0; }
+button { font-family: inherit; }
+
+.instruction { font-size: var(--text-instruction); font-weight: 600; }
+.muted { color: var(--muted); }
+.small { font-size: var(--text-small); }
+
+/* The hidden attribute must always win, even over classes that set display. */
+[hidden] { display: none !important; }
+
+/* ---------- Golden-hour background: three soft orbs drifting slowly ---------- */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fff1dd 0%, var(--bg-base) 45%, #fdeef5 100%);
+  pointer-events: none;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.75;
+  will-change: transform;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+.orb-1 { width: 320px; height: 320px; top: -90px; right: -110px; background: var(--orb-gold); }
+.orb-2 { width: 300px; height: 300px; top: 32%; left: -150px; background: var(--orb-coral); opacity: 0.5; animation-duration: 28s; animation-delay: -6s; }
+.orb-3 { width: 340px; height: 340px; bottom: -130px; right: -120px; background: var(--orb-violet); opacity: 0.55; animation-duration: 32s; animation-delay: -12s; }
+.orb-4 { width: 200px; height: 200px; bottom: 22%; left: 30%; background: var(--orb-rose); opacity: 0.4; animation-duration: 26s; animation-delay: -3s; }
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(36px, -28px, 0) scale(1.12); }
+}
+
+/* ---------- Demo banner (every screen; must stay clearly yellow — PRD F2) ---------- */
+.demo-banner {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--yellow);
+  color: #000;
+  font-weight: 800;
+  font-size: var(--text-small);
+  line-height: 1.25;
+  text-align: center;
+  padding: 10px 18px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  border-radius: 0 0 22px 22px;
+  box-shadow: 0 6px 18px rgba(90, 60, 0, 0.22);
+}
+.demo-banner::before { content: "● "; color: #b00020; animation: blink 1.6s steps(2, start) infinite; }
+@keyframes blink { to { visibility: hidden; } }
+
+/* ---------- Layout + screen entrance ---------- */
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+
+.stack > * + * { margin-top: 16px; }
+
+/* Each screen's blocks rise in one after another (staggered by position). */
+.stack > * { animation: rise var(--dur-enter) var(--ease-out) both; }
+.stack > *:nth-child(2) { animation-delay: 50ms; }
+.stack > *:nth-child(3) { animation-delay: 100ms; }
+.stack > *:nth-child(4) { animation-delay: 150ms; }
+.stack > *:nth-child(5) { animation-delay: 200ms; }
+.stack > *:nth-child(6) { animation-delay: 250ms; }
+.stack > *:nth-child(n + 7) { animation-delay: 300ms; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Glass ---------- */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: var(--glass-solid); }
+}
+
+.card { padding: 18px; }
+.card > * + * { margin-top: 16px; }
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Icon bubble in a card title. Every inline icon needs an explicit size: SVGs have none. */
+.card-title svg {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 13px;
+  color: #2a1533;
+  background: linear-gradient(135deg, #ffe2a8, #ffc0a6);
+}
+svg { max-width: 100%; }
+
+/* ---------- Header ---------- */
+.screen-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.screen-header h1 { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+
+.brand { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.brand img { width: 48px; height: 48px; border-radius: 15px; box-shadow: 0 6px 16px var(--red-glow); }
+.brand-name { font-size: var(--text-h1); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.brand-tag { display: block; font-size: 16px; font-weight: 600; color: var(--muted); margin-top: 4px; letter-spacing: 0; }
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  color: var(--ink);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.icon-btn:active { transform: scale(0.92); }
+.icon-btn svg { width: 26px; height: 26px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 20px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background: var(--glass-strong);
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.btn .btn-row { display: inline-flex; align-items: center; gap: 10px; }
+.btn svg { width: 24px; height: 24px; flex: none; }
+.btn small { display: block; font-size: var(--text-small); font-weight: 600; opacity: 0.92; letter-spacing: 0; }
+.btn:disabled { opacity: 0.5; box-shadow: none; }
+
+.btn-primary { background: var(--ink-gradient); color: var(--on-dark); border-color: rgba(255, 255, 255, 0.18); box-shadow: var(--shadow-float); }
+.btn-danger { background: var(--danger-gradient); color: var(--on-dark); border-color: rgba(255, 255, 255, 0.28); box-shadow: 0 14px 32px var(--red-glow); }
+.btn-quiet { background: var(--glass); box-shadow: none; border-color: var(--line); font-weight: 700; }
+.btn-tall { min-height: 84px; font-size: 26px; }
+
+/* Hero: the EMERGENCY CHECK card-button on Home. */
+.btn-huge {
+  min-height: 190px;
+  padding: 24px 20px;
+  border-radius: 34px;
+  background: var(--hero-gradient);
+  color: var(--on-dark);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-float);
+  font-size: var(--text-hero);
+  line-height: 1.1;
+  gap: 10px;
+}
+.btn-huge svg { width: 30px; height: 30px; }
+/* Light sweep across the hero. */
+.btn-huge::after, .btn-danger.btn-tall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.22) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: sheen 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sheen { 0%, 55% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+
+/* Pulsing beacon inside the hero. */
+.beacon { position: relative; width: 64px; height: 64px; display: grid; place-items: center; margin-bottom: 4px; }
+.beacon::before, .beacon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 200, 97, 0.85);
+  animation: ping 2.4s var(--ease-out) infinite;
+}
+.beacon::after { animation-delay: 1.2s; }
+.beacon-core {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #ffd27a, #ff8f70);
+  color: #2a1533;
+  box-shadow: 0 0 28px rgba(255, 170, 90, 0.75);
+}
+.beacon-core svg { width: 34px; height: 34px; }
+@keyframes ping { from { transform: scale(1); opacity: 0.9; } to { transform: scale(2.1); opacity: 0; } }
+
+/* Heartbeat line that draws itself. */
+.pulse-line { width: 100%; max-width: 260px; height: 28px; opacity: 0.9; }
+.pulse-line path { fill: none; stroke: #ffd27a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 420; stroke-dashoffset: 420; animation: draw 3.2s linear infinite; }
+@keyframes draw { 0% { stroke-dashoffset: 420; } 60%, 100% { stroke-dashoffset: 0; } }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  box-shadow: var(--focus-ring);
+}
+
+/* ---------- Forms ---------- */
+.field { display: block; }
+.field-label { display: block; font-weight: 700; margin-bottom: 8px; }
+.field-hint { display: block; font-size: var(--text-small); color: var(--muted); margin-top: 6px; font-weight: 500; }
+.field-error {
+  display: block;
+  font-size: var(--text-small);
+  font-weight: 700;
+  color: var(--red-dark);
+  background: var(--red-tint);
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  animation: shake 360ms var(--ease-out);
+}
+.field-error:empty { display: none; }
+.field-error::before { content: "⚠ "; }
+@keyframes shake { 0%, 100% { transform: none; } 25% { transform: translateX(-6px); } 60% { transform: translateX(5px); } }
+
+input[type="text"], input[type="tel"], input[type="number"], input[type="password"], select, textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 18px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--glass-strong);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-control);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.85; font-weight: 500; }
+input:focus, select:focus, textarea:focus { background: #fff; border-color: var(--focus); }
+textarea { min-height: 96px; resize: vertical; }
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 48px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b1320' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 22px;
+}
+.has-error input, .has-error select, .has-error textarea,
+.has-error input:focus, .has-error select:focus, .has-error textarea:focus { border-color: var(--red); border-width: 3px; background: #fff; }
+
+/* Choice pills: big radio buttons (Yes / No / Unknown and similar). */
+fieldset.choice-group { border: 0; padding: 0; margin-left: 0; margin-right: 0; margin-bottom: 0; min-width: 0; }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice { flex: 1 1 auto; position: relative; }
+.choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.choice span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  min-width: 72px;
+  padding: 8px 16px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--glass-strong);
+  font-weight: 700;
+  text-align: center;
+  transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-fast), color var(--dur-fast);
+}
+.choice input:active + span { transform: scale(0.95); }
+.choice input:checked + span { background: var(--ink-gradient); border-color: transparent; color: var(--on-dark); box-shadow: 0 8px 18px rgba(42, 21, 51, 0.3); }
+.choice input:checked + span::before { content: "✓ "; white-space: pre; }
+.choice input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* Toggle row: label on the left, a real switch on the right (still a checkbox underneath). */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-control);
+  background: var(--glass-strong);
+  cursor: pointer;
+}
+.toggle-text { flex: 1; min-width: 0; }
+.toggle-text strong { display: block; }
+.toggle input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 64px;
+  height: 36px;
+  margin: 0;
+  border-radius: var(--radius-pill);
+  background: #8b8093;
+  border: 0;
+  cursor: pointer;
+  transition: background 220ms var(--ease-out);
+}
+.toggle input::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 260ms var(--ease-spring);
+}
+.toggle input:checked { background: var(--green); }
+.toggle input:checked::after { transform: translateX(28px); }
+/* On/off is also written as a word, never colour alone. */
+.toggle-state { font-size: 16px; font-weight: 800; letter-spacing: 0.04em; color: var(--muted); min-width: 34px; text-align: right; }
+.toggle-state svg { width: 16px; height: 16px; vertical-align: -2px; margin-right: 4px; }
+.toggle input:disabled { cursor: not-allowed; }
+.toggle.is-locked { cursor: default; border-color: var(--green); background: var(--green-tint); }
+
+/* ---------- Panels, lists, status chips ---------- */
+.panel {
+  background: var(--glass-strong);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-control);
+  padding: 14px 16px;
+  font-weight: 500;
+}
+.panel-warn { background: var(--amber-tint); border-color: var(--amber); color: #000; }
+.panel-row { display: flex; gap: 12px; align-items: flex-start; }
+.panel-row svg { width: 24px; height: 24px; flex: none; margin-top: 2px; }
+
+.list { list-style: none; margin: 0; padding: 0; }
+.list > li + li { margin-top: 10px; }
+
+.row-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 68px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: 20px;
+  background: var(--glass-strong);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast);
+}
+.row-btn:active { transform: scale(0.98); background: #fff; }
+.row-icon {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  color: #2a1533;
+  background: linear-gradient(135deg, #ffe2a8, #ffc0a6);
+}
+.row-icon svg { width: 24px; height: 24px; }
+.row-btn .row-main { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.row-btn .row-main .status { display: inline-block; margin-top: 6px; white-space: normal; }
+.row-btn .row-main strong { display: block; font-weight: 700; }
+.row-btn .row-go { color: var(--muted); display: grid; place-items: center; }
+.row-btn .row-go svg { width: 22px; height: 22px; }
+
+/* Status is always a WORD plus a colour and a symbol, never colour alone. */
+.status {
+  flex: none;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+}
+.status-ok { color: var(--green); background: var(--green-tint); }
+.status-ok::before { content: "✓ "; }
+.status-todo { color: var(--red-dark); background: var(--red-tint); }
+.status-todo::before { content: "! "; }
+
+.badge {
+  flex: none;
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--ink-gradient);
+  color: var(--on-dark);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+/* Setup progress ring on Home. */
+.progress { display: flex; align-items: center; gap: 14px; }
+.progress-ring { flex: none; width: 64px; height: 64px; transform: rotate(-90deg); }
+.progress-ring circle { fill: none; stroke-width: 8; stroke-linecap: round; }
+.progress-ring .track { stroke: rgba(27, 19, 32, 0.12); }
+.progress-ring .value { stroke: url(#ringGradient); transition: stroke-dashoffset 900ms var(--ease-out); }
+.progress-text strong { display: block; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+
+/* ---------- Toast + update bar ---------- */
+.toast {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 40;
+  max-width: 528px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--ink-gradient);
+  color: var(--on-dark);
+  font-weight: 700;
+  text-align: center;
+  box-shadow: var(--shadow-float);
+  animation: toast-in 380ms var(--ease-spring) both;
+}
+@keyframes toast-in { from { opacity: 0; transform: translate3d(0, 28px, 0) scale(0.94); } to { opacity: 1; transform: none; } }
+
+.update-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 30;
+  max-width: 536px;
+  margin: 0 auto;
+  min-height: 60px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #5b3fd6, #8a4bd8);
+  color: var(--on-dark);
+  font-size: var(--text-body);
+  font-weight: 800;
+  box-shadow: var(--shadow-float);
+  animation: toast-in 420ms var(--ease-spring) both;
+}
+
+/* ---------- Install page (S1) ---------- */
+.install { text-align: center; padding-top: 12px; }
+.install-card { padding: 24px 18px; }
+.install-icon { position: relative; width: 112px; height: 112px; margin: 0 auto 8px; }
+.install-icon img { position: relative; width: 112px; height: 112px; border-radius: 32px; box-shadow: 0 18px 40px var(--red-glow); animation: float 5s ease-in-out infinite; }
+.install-icon::before { content: ""; position: absolute; inset: -18px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 200, 97, 0.7), transparent 68%); animation: breathe 5s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes breathe { 0%, 100% { transform: scale(0.95); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
+.install h1 { font-size: 42px; letter-spacing: -0.04em; }
+.install .pulse-line { margin: 0 auto; display: block; }
+.install .pulse-line path { stroke: var(--red); }
+.install .instruction { font-size: 22px; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.chip { padding: 6px 14px; border-radius: var(--radius-pill); background: var(--glass-strong); border: 1.5px solid var(--glass-border); font-size: 16px; font-weight: 700; }
+
+/* Language screen: big glass tiles. */
+.lang-tile { min-height: 96px; font-size: 30px; border-radius: 28px; }
+
+.disclaimer { font-size: var(--text-small); color: var(--muted); text-align: center; padding: 4px 8px; font-weight: 500; }
+
+/* ---------- Motion safety ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .pulse-line path { stroke-dashoffset: 0; }
+  .btn-huge::after, .btn-danger.btn-tall::after { display: none; }
+}
