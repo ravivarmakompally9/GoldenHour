@@ -9,10 +9,11 @@ Owner = things only the team can do. Claude = build work (one milestone at a tim
       install, language, 108/112 refused, banner, profile, contacts, airplane mode, update bar, reset.
 - [ ] **Owner:** check the glass look on the phone — smooth scrolling? readable outdoors?
 - [ ] **Owner:** skim `docs/PRD.md` once to confirm it matches your export.
-- [ ] **Owner:** GitHub repo → Settings → Pages → Source: **GitHub Actions**.
+- [x] GitHub repo → Settings → Pages → Source: **GitHub Actions** (done 2026-09-21).
       (Optional: rename the repo to `goldenhour`, see DECISIONS D15.)
-- [ ] **Owner:** say OK → **Claude:** merge `ws0-foundation` into `main`, push, confirm the Actions
-      run is green and the live URL installs.
+- [x] Merged `ws0-foundation` into `main`, pushed, Actions green. Live at
+      https://ravivarmakompally9.github.io/GoldenHour/ (case-sensitive; lowercase is a 404).
+- [ ] **Owner:** install from the live link on the phone and run the M1 checklist.
 - [ ] **Owner:** confirm the planned `card.js` change (`cardModel()` instead of `renderCard()`, D14).
 
 ## 1. M2 — Arm test → HIGH ALERT → call/SMS (first demoable version)
