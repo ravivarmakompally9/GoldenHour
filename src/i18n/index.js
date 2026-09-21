@@ -7,8 +7,12 @@ import en from "./en.json";
 import hi from "./hi.json";
 import te from "./te.json";
 import { createTranslator } from "../lib/i18n.js";
+import { setMessageCatalog } from "../lib/alerts.js";
 
 export const DICTIONARIES = { en, hi, te };
+
+// The family-alert message is written in the CONTACT's language, which can differ from the app's.
+setMessageCatalog(DICTIONARIES);
 
 /** t() for a language code; unknown codes fall back to English. */
 export function translatorFor(lang) {
