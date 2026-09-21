@@ -51,61 +51,84 @@ Open questions and resolved conflicts live in `docs/DECISIONS.md` — read it to
 
 ## 3. Tech rules
 
-- Plain HTML, CSS, JavaScript ES modules. No framework, bundler, build step, TypeScript, or npm
-  runtime dependencies. Must run as static files on GitHub Pages (HTTPS). Use relative paths
-  (`./…`) everywhere — the site is served from a sub-path.
-- Only Part 1 technologies from PRD §14.
-- Vendor every library into `/vendor` and every model into `/models` at pinned versions; record
-  name, version, source URL in `vendor/VERSIONS.md`. Only allowed runtime download: Whisper
-  weights fetched by Transformers.js from Hugging Face (browser-cached).
+- **Stack (DECISIONS D14): React 18 + Vite, JavaScript (no TypeScript), plain CSS.** No UI kit
+  (no MUI, Bootstrap, Tailwind…): styles come from `src/css/tokens.css` + `src/css/styles.css`.
+  Every dependency is pinned to an exact version in `package.json`; `package-lock.json` is
+  committed; CI uses `npm ci`. Add a dependency only when the PRD §14 stack needs it.
+- **Logic stays framework-free.** Everything in `src/lib/` is plain ES modules: no React, no JSX,
+  no `import.meta.env`, no `virtual:` imports (`test/pwa.test.js` enforces this). That covers
+  `decision.js`, `validatePhone`, the face/speech/arm metric math, link builders, `storage.js`,
+  `thresholds.js`, `llm.js` and the screening-test modules. They are unit-tested with
+  `node --test` (no `npm install` needed to run the tests).
+- **React is only the view.** Screens (`src/screens/*.jsx`) call logic through small hooks:
+  `useAppState()` (settings, `t()`, toast), `useHashRoute()`, `useInstallPrompt()`,
+  `useScreeningTest(module)` (runs a test module's `run()`/`abort()` with React lifecycle).
+- **Routing: hash router** (`src/lib/router.js` + `src/hooks/useHashRoute.js`). GitHub Pages
+  cannot serve SPA deep links. Routes look like `#/settings`, `#/contacts/c1`.
+- **Base path:** `base` defaults to `/goldenhour/` in `vite.config.js`; the deploy workflow sets
+  `VITE_BASE` from the real repo name because Pages paths are case-sensitive (D15). In code use
+  `import.meta.env.BASE_URL + "models/…"` for files in `public/` — never a hardcoded `/`.
+- **PWA: vite-plugin-pwa, `generateSW`, `registerType: "prompt"`.** Workbox precaches the app,
+  fonts, WASM and `face_landmarker.task`; `maximumFileSizeToCacheInBytes` is 30 MB (the 2 MB
+  default silently skips the model). `scripts/check-dist.mjs` fails the build if any shipped
+  file is missing from the precache. No manual cache-version bump: Workbox revisions every file.
+- **Static assets live in `public/`** so their paths stay stable: `public/icons/`,
+  `public/fonts/`, `public/models/face_landmarker.task`, `public/vendor/mediapipe/wasm/`,
+  `public/data/hospitals.json`. JS libraries (Chart.js, `@mediapipe/tasks-vision`,
+  qrcode-generator, html2canvas, `@huggingface/transformers`) are pinned npm packages bundled by
+  Vite — never a CDN. Record every library, model and WASM version + source URL in
+  `docs/VERSIONS.md`. Only allowed runtime download: Whisper weights fetched by Transformers.js.
 - If a download is blocked, give the owner exact file names + URLs and carry on.
+- Only Part 1 technologies from PRD §14.
 - Target: Chrome for Android, portrait phones. UI rules (PRD §9): body ≥ 20px, headings ≥ 28px,
   test instructions ≥ 24px, buttons ≥ 56px tall, touch targets ≥ 48×48, WCAG AA, red `#D32F2F`,
   never colour alone (always a word), yellow DEMO MODE banner on every screen.
-- Every threshold lives in `js/thresholds.js`. Never hardcode thresholds in test modules.
-- Every user-facing string lives in `i18n/en.json`, `i18n/hi.json`, `i18n/te.json`. Hindi/Telugu
-  files start with a "NEEDS NATIVE SPEAKER REVIEW" note (constraint C17).
-- Every test module gets a standalone page in `dev/` and must work there before being wired in.
-- Beginner-readable code: small functions; comments explain the *why* (especially face, speech,
-  arm math).
-- Keep pure logic (math, decisions, link builders, validators) free of browser APIs so it can be
-  unit-tested with `node --test` (no dependencies). Unit tests live in `test/` (note: `js/tests/`
-  holds the screening-test modules, not unit tests).
+- Every threshold lives in `src/lib/thresholds.js`. Never hardcode thresholds in test modules.
+- Every user-facing string lives in `src/i18n/en.json`, `hi.json`, `te.json` (bundled, so they
+  work offline). Hindi/Telugu files carry a "NEEDS NATIVE SPEAKER REVIEW" note (C17). Use literal
+  keys — `t("home.title")` — so `test/i18n.test.js` can check them.
+- Every test module gets a standalone harness page in `dev/` (plain JS, no React — it proves the
+  module is framework-free) and must work there before being wired into a screen. Open it with
+  `npm run dev` at `/goldenhour/dev/<name>.html`.
+- Beginner-readable code: small functions and components; comments explain the *why*.
 - Storage: localStorage only, keys prefixed `gh_`, every read/write in try/catch with defaults.
   Face snapshot stays in memory only.
-- Bump the cache version in `sw.js` on every change that ships, and keep its precache list in
-  sync with new files.
 
-## 4. Folder structure (PRD §15 — follow exactly)
+## 4. Folder structure
 
 ```
-index.html            app shell, loads js/app.js
-manifest.json  sw.js  README.md  CLAUDE.md
-css/styles.css        global UI rules
-icons/                icon-192.png, icon-512.png
-models/               face_landmarker.task
-vendor/               mediapipe/ (bundle + wasm/), chart.umd.js, qrcode.js,
-                      html2canvas.min.js, transformers.min.js, VERSIONS.md
-data/hospitals.json   F19 (verified list only)
-i18n/                 en.json, hi.json, te.json
-dev/                  face.html, arm.html, speech.html harness pages
-docs/                 PRD.md (single source of truth), DECISIONS.md
-test/                 node --test unit tests (pure logic only)
-js/
-  app.js              router, screen switching, current session
-  storage.js          gh_* get/set with try/catch
-  thresholds.js       default thresholds
-  i18n.js  tts.js     strings + voice (F15)
-  settings.js         F2 validation, Demo Mode
-  profile.js  contacts.js   pure rules for F3/F4 (unit-tested)  · pwa.js  SW registration + update bar
-  ui/components.js    top bar, demo banner, buttons, EMERGENCY NOW
-  screens/            one file per screen S1–S18
-  tests/              face.js, speech.js, speech-worker.js, arm.js, eyes.js, balance.js
-  baseline.js  decision.js  alerts.js  location.js  hospitals.js
-  card.js  llm.js  calibration.js
+index.html              Vite entry (loads src/main.jsx)
+vite.config.js          base path, React plugin, PWA (manifest + Workbox)
+package.json  package-lock.json      exact pinned versions
+.github/workflows/deploy.yml         test -> build -> check-dist -> GitHub Pages
+scripts/check-dist.mjs  fails the build if a shipped file is not precached
+public/                 copied as-is into dist/ (stable paths)
+  icons/                icon-192.png, icon-512.png
+  fonts/                redesign fonts (woff2)
+  models/               face_landmarker.task                      (M3)
+  vendor/mediapipe/wasm/  MediaPipe WASM files                    (M3)
+  data/hospitals.json   F19 (verified list only)
+dev/                    harness pages: arm.html, face.html, speech.html (plain JS, dev server only)
+docs/                   PRD.md (source of truth), DECISIONS.md, VERSIONS.md, design/ (redesign)
+test/                   node --test unit tests + guard test (pure logic only)
+src/
+  main.jsx  App.jsx     entry; route -> screen, demo banner, toast, update bar
+  css/                  tokens.css (design tokens), styles.css (global UI rules)
+  i18n/                 en.json, hi.json, te.json, index.js (bundles them)
+  state/AppState.jsx    settings + t() + toast context
+  hooks/                useHashRoute, useInstallPrompt, useScreeningTest
+  pwa/                  installPrompt.js (beforeinstallprompt), useAppUpdate.js (update bar)
+  components/ui.jsx     DemoBanner, Header, Button, EmergencyNowButton, fields, StatusWord, Toast
+  screens/              one .jsx per screen S1–S18
+  lib/                  FRAMEWORK-FREE logic (no React) — unit-tested
+    storage.js thresholds.js settings.js profile.js contacts.js i18n.js router.js tts.js
+    decision.js alerts.js location.js hospitals.js card.js llm.js baseline.js calibration.js
+    tests/              face.js, speech.js, speech-worker.js, arm.js, eyes.js, balance.js
 ```
 
 ## 5. Module contracts (do not change signatures)
+
+All of these are plain JS in `src/lib/` (paths relative to it). Unchanged from PRD §15.
 
 | Module | Exports | Returns |
 |---|---|---|
@@ -113,11 +136,29 @@ js/
 | `decision.js` | `decide(core, extended, emergencyNow)` | `"HIGH_ALERT"` \| `"NO_CLEAR_SIGNS"` \| `"COULD_NOT_TEST"` \| `"INCONCLUSIVE"` |
 | `alerts.js` | `startCountdown(seconds, onFire)`, `pause()`, `resume()`, `cancel()`, `buildMessage(session, contact, lang)`, `callLink(settings)`, `smsLink(phone, text)`, `waLink(phone, text)` | link strings; countdown callbacks |
 | `location.js` | `getLocation()` | `{ lat, lng, at, source: "live" \| "last" }` or `null` |
-| `card.js` | `renderCard(session, profile)`, `cardText(session, profile)`, `shareCard(element)` | Element; plain text (QR); share promise |
+| `card.js` | `cardModel(session, profile)`, `cardText(session, profile)`, `shareCard(element)` | plain data for the card; plain text (QR); share promise |
 | `llm.js` | `getExplanation(session, lang)` | `{ family_message, doctor_summary, source }` |
 | `tts.js` | `say(key, vars)`, `stop()` | — |
-| `storage.js` | `get(key, fallback)`, `set(key, value)`, `clearAll()` | stored value |
-| `settings.js` | `validatePhone(str)` | `{ ok, value, error }` |
+| `storage.js` | `get(key, fallback)`, `set(key, value)`, `clearAll()` (+ `getText`, `setText` for API keys) | stored value |
+| `settings.js` | `validatePhone(str)` (+ `getSettings`, `saveSettings`, `isDemoReady`, `getApiKey`, `setApiKey`) | `{ ok, value, error }` |
+| `i18n.js` | `format`, `lookup`, `createTranslator(strings, fallback)` | `t(key, vars)` |
+| `router.js` | `parseHash`, `buildHash`, `resolveRoute(route, flags)` | `{ name, params }` |
+
+One contract changed with React (D14): PRD `card.js` had `renderCard(session, profile)` returning
+a DOM Element. Now `card.js` exports `cardModel(session, profile)` (plain data, unit-testable) and
+`src/screens/DoctorCardScreen.jsx` renders it. `cardText` and `shareCard(element)` are unchanged.
+
+React-side contracts:
+
+| Hook / component | Gives you |
+|---|---|
+| `useAppState()` | `{ settings, saveSettings(changes), resetAll(), t(key, vars), toast(msg, ms) }` |
+| `useHashRoute()`, `navigate(name, params)` | current `{ name, params }`; go to `#/name/param…` |
+| `useInstallPrompt()` | `{ canInstall, installed, promptInstall() }` |
+| `useAppUpdate()` | `{ updateReady, applyUpdate() }` |
+| `useScreeningTest(module)` | `{ containerRef, status, result, error, start(options), abort() }` — aborts on unmount; never invents a result (error → the screen records NOT_TESTED) |
+| Screen component | `export default function XScreen({ params })` registered in `SCREENS` in `src/App.jsx` |
+| `<EmergencyNowButton>`, `<DemoBanner>` | the single shared versions — do not re-implement |
 
 `TestResult`: `{ test, status, mode, rule, weakerSide, metrics, engine, message, startedAt, durationMs }`
 — status ∈ `NORMAL | ABNORMAL | NOT_COMPLETED | NOT_TESTED | INCONCLUSIVE`; mode ∈
@@ -135,11 +176,16 @@ Storage keys: `gh_settings`, `gh_key_gemini`, `gh_key_openrouter`, `gh_profile`,
   **Never push and never merge into `main` without asking.**
 - PRD unclear or self-conflicting → pick the safest option, record it in `docs/DECISIONS.md` with
   the reason, and tell the owner.
-- Run `node --test` before every commit that touches logic.
+- Before every commit: `node --test`. Before every merge: `npm run check`
+  (tests + build + offline precache check).
 - Never write a literal mobile number anywhere, including unit tests — build samples at runtime
-  (`"9" + "0".repeat(9)`). `test/guard.test.js` fails the build on `tel:108`-style links or
-  phone-like numbers in app code.
-- Deploy: GitHub Pages from `main`, root folder. Test a branch without deploying via
-  `python3 -m http.server 8080` + chrome://inspect port forwarding (README).
+  (`"9" + "0".repeat(9)`). `test/guard.test.js` scans `index.html`, `vite.config.js`, `src/` and
+  `public/` (not `docs/`, `test/`, or any `vendor/` / `models/` folder) and fails on emergency
+  `tel:` links, phone-like numbers, API-key patterns or `demoMode: false`.
+- Commands: `npm ci` · `npm run dev` (http://localhost:8080/goldenhour/) · `npm run build` ·
+  `npm run preview` (serves the real build, with service worker) · `npm test`.
+- Deploy: push to `main` → GitHub Actions builds and publishes `dist/` to Pages. Test a branch on
+  a phone without deploying: `npm run build && npm run preview` + chrome://inspect port
+  forwarding 8080 (README).
 - End of each milestone, report: what was built, which PRD acceptance criteria pass, phone test
   checklist (incl. what to look at in `chrome://inspect`), known issues, what comes next.
