@@ -6,6 +6,7 @@
 // (DECISIONS D15). Local `npm run dev` / `npm run preview` use the same base:
 //   http://localhost:8080/goldenhour/
 
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
@@ -57,6 +58,8 @@ export default defineConfig(() => {
           globIgnores: ["**/manifest.json"], // the plugin adds the manifest itself
           maximumFileSizeToCacheInBytes: MAX_PRECACHE_BYTES,
           navigateFallback: "index.html",
+          // Never answer a /dev/ harness page with the app shell.
+          navigateFallbackDenylist: [/\/dev\//],
           cleanupOutdatedCaches: true
           // LLM calls (F14) and Hugging Face Whisper downloads (F8) are cross-origin and are not
           // touched by the service worker; Transformers.js keeps its own browser cache.
@@ -65,7 +68,16 @@ export default defineConfig(() => {
     ],
     build: {
       target: "es2020",
-      sourcemap: false
+      sourcemap: false,
+      // The dev harness pages ship with the site too, so a test module can be tried alone on a
+      // phone straight from GitHub Pages (…/dev/arm.html) without a USB cable. They are plain JS
+      // developer pages, clearly labelled, and cannot send alerts or place calls.
+      rollupOptions: {
+        input: {
+          main: fileURLToPath(new URL("./index.html", import.meta.url)),
+          "dev-arm": fileURLToPath(new URL("./dev/arm.html", import.meta.url))
+        }
+      }
     }
   };
 });

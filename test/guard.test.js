@@ -2,7 +2,7 @@
 // phone-number-like literal or API key sneaks into the app (PRD Section 16: the 108 rule, C2, C5).
 //
 // Scope (DECISIONS D8, updated for React + Vite in D14):
-//   scanned      index.html, vite.config.js, src/** and public/** (text files)
+//   scanned      index.html, vite.config.js, src/**, public/** and dev/** (text files)
 //   not scanned  docs/ (the PRD describes Part 2's tel:108), the unit tests in test/,
 //                node_modules/, dist/, and any folder named vendor/ or models/ (third-party files)
 //   NOTE: src/lib/tests/ holds the screening-test MODULES (face, arm, speech) and IS scanned.
@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SCAN_FILES = ["index.html", "vite.config.js"];
-const SCAN_DIRS = ["src", "public"];
+const SCAN_DIRS = ["src", "public", "dev"];
 const SKIP_DIR_NAMES = ["vendor", "models", "node_modules", "dist"];
 const TEXT_FILE = /\.(html|js|jsx|mjs|json|css|svg|txt|webmanifest)$/i;
 

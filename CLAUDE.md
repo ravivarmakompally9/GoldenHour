@@ -95,7 +95,9 @@ Open questions and resolved conflicts live in `docs/DECISIONS.md` — read it to
   keys — `t("home.title")` — so `test/i18n.test.js` can check them.
 - Every test module gets a standalone harness page in `dev/` (plain JS, no React — it proves the
   module is framework-free) and must work there before being wired into a screen. Open it with
-  `npm run dev` at `/goldenhour/dev/<name>.html`.
+  `npm run dev` at `/goldenhour/dev/<name>.html`. Harness pages are also built and deployed
+  (`…/dev/arm.html` on the live site) — add each new one to `build.rollupOptions.input`.
+  No simulated-sensor buttons in harness pages: results come from real hardware only.
 - Beginner-readable code: small functions and components; comments explain the *why*.
 - Storage: localStorage only, keys prefixed `gh_`, every read/write in try/catch with defaults.
   Face snapshot stays in memory only.
@@ -138,7 +140,7 @@ All of these are plain JS in `src/lib/` (paths relative to it). Unchanged from P
 
 | Module | Exports | Returns |
 |---|---|---|
-| `tests/*.js` | `run({ mode, container, baseline, thresholds, camera })`, `abort()` | `Promise<TestResult>` |
+| `tests/*.js` | `run({ mode, container, baseline, thresholds, camera, onUpdate })`, `abort()` — the module draws only its preview/graph into `container` and reports `onUpdate(state)`; the screen renders the words (D24). `arm.js` also exports `armPlaced()`, `cannotDo()`. Maths + verdict live in a pure `*-metrics.js` file next to it. | `Promise<TestResult>`; `message` is an i18n KEY + `messageVars`; `series` is never stored |
 | `decision.js` | `decide(core, extended, emergencyNow)` | `"HIGH_ALERT"` \| `"NO_CLEAR_SIGNS"` \| `"COULD_NOT_TEST"` \| `"INCONCLUSIVE"` |
 | `alerts.js` | `startCountdown(seconds, onFire)`, `pause()`, `resume()`, `cancel()`, `buildMessage(session, contact, lang)`, `callLink(settings)`, `smsLink(phone, text)`, `waLink(phone, text)` | link strings; countdown callbacks |
 | `location.js` | `getLocation()` | `{ lat, lng, at, source: "live" \| "last" }` or `null` |

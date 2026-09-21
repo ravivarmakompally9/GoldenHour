@@ -20,12 +20,14 @@ Owner = things only the team can do. Claude = build work (one milestone at a tim
 
 Branches `ws2-arm` + `ws4-alerts`.
 
-- [ ] `src/lib/tests/arm-metrics.js`: smoothing, readiness, drift Δβ, pronation Δγ, tremor, score A,
+- [x] `src/lib/tests/arm-metrics.js`: smoothing, readiness, drift Δβ, pronation Δγ, tremor, score A,
       drop detection, general + baseline rules — pure maths + unit tests on synthetic angle series.
-- [ ] `src/lib/tests/arm.js`: sensors, vibration cues, `run()/abort()` contract; NOT_TESTED when no
+- [x] `src/lib/tests/arm.js`: sensors, vibration cues, `run()/abort()` contract; NOT_TESTED when no
       gyroscope; NOT_COMPLETED on drop.
-- [ ] `dev/arm.html` harness (plain JS) — must work on the phone before wiring in.
-- [ ] Add `chart.js` (pinned) for the live tilt graph; record in `docs/VERSIONS.md`.
+- [x] `dev/arm.html` harness (plain JS) — built.
+- [ ] **Owner:** run the harness on a real phone (steady arm, slow sag, palm rotation, drop,
+      "cannot do", phone left on a table) and report the numbers + samples/s.
+- [x] Add `chart.js` (pinned) for the live tilt graph; record in `docs/VERSIONS.md`.
 - [ ] `src/lib/decision.js`: `decide()` + unit tests for R1–R8.
 - [ ] `src/lib/alerts.js`: countdown (pause/resume/cancel), `buildMessage`, `callLink` (demo number
       only, `null` when unset), `smsLink`, `waLink` + unit tests.
