@@ -51,3 +51,17 @@ or anything else on the same GitHub Pages origin.
 If no demo emergency number has been saved yet, `callLink(settings)` returns `null` and the CALL
 button opens Settings with the message to enter a teammate's mobile. It never falls back to a real
 emergency number (108 rule). The Home checklist shows "Demo numbers: not set" until fixed.
+
+## D7 — F9 arm "no baseline" rule is cut off in the PDF text — OPEN
+
+**Found:** The no-baseline threshold cell reads "Either arm A > 12°; or" and then stops (PDF page
+23). A second condition (probably a left–right difference limit) was lost in extraction.
+**Safest option:** `thresholds.js` ships `arm.generalMaxA = 12` and also a general left–right
+difference limit `arm.generalMaxDiff = 6` (the same 6° margin the baseline rule uses). Adding the
+extra check can only create more alerts, never fewer, which matches the PRD's "lean toward false
+alarms" rule. **Owner action:** read page 23 of docs/PRD.pdf and confirm the real second condition.
+
+## D8 — PRD docs mention `tel:108`; the code must not — SETTLED
+
+`docs/PRD.md` describes the Part 2 production link, so the string appears in docs. The guard unit
+test scans app code only (`index.html`, `sw.js`, `js/`, `dev/`, `i18n/`, `css/`), where it is banned.
