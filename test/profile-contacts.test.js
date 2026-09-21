@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { sampleMobile, useFakeStorage } from "./helpers.js";
-import { validateProfile, getProfile, saveProfile, isProfileDone, DEFAULT_PROFILE } from "../js/profile.js";
+import { validateProfile, getProfile, saveProfile, isProfileDone, DEFAULT_PROFILE } from "../src/lib/profile.js";
 import {
   upsertContact, removeContact, enforceOnePrimary, getPrimary, getContacts, saveContacts, MAX_CONTACTS
-} from "../js/contacts.js";
+} from "../src/lib/contacts.js";
 
 // Fictional demo data only (PRD constraint C3).
 const lakshmi = {

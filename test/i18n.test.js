@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { format, lookup } from "../js/i18n.js";
+import { format, lookup, createTranslator } from "../src/lib/i18n.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const load = (lang) => JSON.parse(readFileSync(join(root, "i18n", lang + ".json"), "utf8"));
+const load = (lang) => JSON.parse(readFileSync(join(root, "src", "i18n", lang + ".json"), "utf8"));
 const en = load("en"), hi = load("hi"), te = load("te");
 const realKeys = (obj) => Object.keys(obj).filter((k) => !k.startsWith("_")).sort();
 
@@ -20,6 +20,13 @@ test("lookup falls back to English, then to the key itself", () => {
   assert.equal(lookup("a", { a: "अ" }, { a: "A" }), "अ");
   assert.equal(lookup("b", { a: "अ" }, { b: "B" }), "B");
   assert.equal(lookup("c", {}, {}), "c");
+});
+
+test("createTranslator translates, fills placeholders and falls back to English", () => {
+  const t = createTranslator(te, en);
+  assert.equal(t("banner.demo", { name: "Teammate A" }), te["banner.demo"].replace("{name}", "Teammate A"));
+  assert.equal(createTranslator({}, en)("common.save"), "Save");
+  assert.equal(t("no.such.key"), "no.such.key");
 });
 
 test("en, hi and te have exactly the same keys", () => {
@@ -70,10 +77,10 @@ test("every t(\"key\") used in the app code exists in en.json", () => {
     for (const name of readdirSync(dir)) {
       const full = join(dir, name);
       if (statSync(full).isDirectory()) walk(full);
-      else if (full.endsWith(".js")) files.push(full);
+      else if (/\.(js|jsx)$/.test(full)) files.push(full);
     }
   };
-  walk(join(root, "js"));
+  walk(join(root, "src"));
   const used = new Set();
   for (const file of files) {
     const src = readFileSync(file, "utf8");

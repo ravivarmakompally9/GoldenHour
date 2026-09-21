@@ -4,7 +4,7 @@ import { sampleMobile, useFakeStorage } from "./helpers.js";
 import {
   validatePhone, normaliseSettings, getSettings, saveSettings, isDemoReady,
   getApiKey, setApiKey, DEFAULT_SETTINGS
-} from "../js/settings.js";
+} from "../src/lib/settings.js";
 
 // ---------- validatePhone: THE 108 RULE ----------
 

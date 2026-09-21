@@ -1,9 +1,11 @@
 // guard.test.js — fails the build if app code could dial a real emergency number, or if a
-// phone-number-like literal sneaks into the app (PRD Section 16: the 108 rule, C2, C5).
+// phone-number-like literal or API key sneaks into the app (PRD Section 16: the 108 rule, C2, C5).
 //
-// Scope (DECISIONS D8): ONLY app code is scanned — index.html, sw.js, manifest.json, css/, js/,
-// ui/, i18n/, dev/. Not scanned: docs/ (the PRD describes Part 2's tel:108), vendor/, models/ and
-// the unit tests themselves.
+// Scope (DECISIONS D8, updated for React + Vite in D14):
+//   scanned      index.html, vite.config.js, src/** and public/** (text files)
+//   not scanned  docs/ (the PRD describes Part 2's tel:108), the unit tests in test/,
+//                node_modules/, dist/, and any folder named vendor/ or models/ (third-party files)
+//   NOTE: src/lib/tests/ holds the screening-test MODULES (face, arm, speech) and IS scanned.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -12,9 +14,10 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SCAN_FILES = ["index.html", "sw.js", "manifest.json"];
-const SCAN_DIRS = ["css", "js", "ui", "i18n", "dev"];
-const TEXT_FILE = /\.(html|js|mjs|json|css|svg|txt|webmanifest)$/i;
+const SCAN_FILES = ["index.html", "vite.config.js"];
+const SCAN_DIRS = ["src", "public"];
+const SKIP_DIR_NAMES = ["vendor", "models", "node_modules", "dist"];
+const TEXT_FILE = /\.(html|js|jsx|mjs|json|css|svg|txt|webmanifest)$/i;
 
 function appFiles() {
   const files = SCAN_FILES.filter((f) => existsSync(join(root, f)));
@@ -22,8 +25,9 @@ function appFiles() {
     if (!existsSync(join(root, dir))) return;
     for (const name of readdirSync(join(root, dir))) {
       const rel = join(dir, name);
-      if (statSync(join(root, rel)).isDirectory()) walk(rel);
-      else if (TEXT_FILE.test(name)) files.push(rel);
+      if (statSync(join(root, rel)).isDirectory()) {
+        if (!SKIP_DIR_NAMES.includes(name)) walk(rel);
+      } else if (TEXT_FILE.test(name)) files.push(rel);
     }
   };
   SCAN_DIRS.forEach(walk);
@@ -45,10 +49,10 @@ function findAll(regex) {
 
 test("the guard actually scans the app (sanity check)", () => {
   const names = sources.map((s) => s.file.split("\\").join("/"));
-  for (const must of ["index.html", "sw.js", "js/settings.js", "js/app.js", "i18n/en.json"]) {
+  for (const must of ["index.html", "vite.config.js", "src/lib/settings.js", "src/App.jsx", "src/screens/SettingsScreen.jsx", "src/i18n/en.json", "public/data/hospitals.json"]) {
     assert.ok(names.includes(must), must + " was not scanned");
   }
-  assert.ok(!names.some((n) => n.startsWith("docs/") || n.startsWith("vendor/") || n.startsWith("test/")));
+  assert.ok(!names.some((n) => /^(docs|test|node_modules|dist)\//.test(n) || /(^|\/)(vendor|models)\//.test(n)));
 });
 
 test("THE 108 RULE: no tel: link to an emergency or short code anywhere in app code", () => {

@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { useFakeStorage, useBrokenStorage } from "./helpers.js";
-import * as storage from "../js/storage.js";
-import { DEFAULT_THRESHOLDS, mergeThresholds, getThresholds } from "../js/thresholds.js";
+import * as storage from "../src/lib/storage.js";
+import { DEFAULT_THRESHOLDS, mergeThresholds, getThresholds } from "../src/lib/thresholds.js";
 
 test("get returns the fallback for missing or broken values", () => {
   const fake = useFakeStorage();
