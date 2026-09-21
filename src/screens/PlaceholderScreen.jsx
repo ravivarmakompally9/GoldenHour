@@ -9,7 +9,8 @@
 
 import { useAppState } from "../state/AppState.jsx";
 import { navigate } from "../hooks/useHashRoute.js";
-import { Header, Button } from "../components/ui.jsx";
+import { Header, Button, Card } from "../components/ui.jsx";
+import { IconAlert } from "../components/icons.jsx";
 
 export default function PlaceholderScreen({ params }) {
   const { t } = useAppState();
@@ -19,8 +20,8 @@ export default function PlaceholderScreen({ params }) {
   return (
     <div className="stack">
       <Header title={t("placeholder.title")} onBack={goHome} />
-      <p className="instruction">{isBaseline ? t("placeholder.baseline") : t("placeholder.check")}</p>
-      {!isBaseline && <div className="panel panel-warn"><strong>{t("placeholder.realEmergency")}</strong></div>}
+      <Card><p className="instruction">{isBaseline ? t("placeholder.baseline") : t("placeholder.check")}</p></Card>
+      {!isBaseline && <div className="panel panel-warn panel-row"><IconAlert /><strong>{t("placeholder.realEmergency")}</strong></div>}
       <Button label={t("placeholder.backHome")} variant="primary" onClick={goHome} />
     </div>
   );

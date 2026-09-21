@@ -19,7 +19,7 @@ export default function LanguageScreen() {
     <div className="stack">
       <h1>{t("language.title")}</h1>
       {LANGUAGES.map((lang) => (
-        <Button key={lang} label={names[lang]} size="tall" onClick={() => choose(lang)} />
+        <Button key={lang} label={names[lang]} className="lang-tile glass" onClick={() => choose(lang)} />
       ))}
     </div>
   );

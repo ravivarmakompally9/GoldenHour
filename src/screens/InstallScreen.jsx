@@ -6,7 +6,8 @@ import { useAppState } from "../state/AppState.jsx";
 import { useInstallPrompt } from "../hooks/useInstallPrompt.js";
 import { rememberInstallSkipped } from "../pwa/installPrompt.js";
 import { navigate } from "../hooks/useHashRoute.js";
-import { Button } from "../components/ui.jsx";
+import { Button, Card } from "../components/ui.jsx";
+import { IconCheck, IconDownload, IconInfo, PulseLine } from "../components/icons.jsx";
 
 const NO_EVENT_HINT_MS = 4000;
 
@@ -35,19 +36,37 @@ export default function InstallScreen() {
 
   return (
     <div className="stack install">
-      <img src={import.meta.env.BASE_URL + "icons/icon-192.png"} alt="" width="128" height="128" />
-      <h1>{t("app.name")}</h1>
-      <p className="instruction">{t("install.purpose")}</p>
-      <Button label={t("install.button")} variant="danger" size="tall" onClick={install} />
+      <Card className="install-card">
+        <div className="install-icon">
+          <img src={import.meta.env.BASE_URL + "icons/icon-192.png"} alt="" width="132" height="132" />
+        </div>
+        <h1>{t("app.name")}</h1>
+        <PulseLine />
+        <p className="instruction">{t("install.purpose")}</p>
+        <div className="chips">
+          <span className="chip">{t("install.chip.offline")}</span>
+          <span className="chip">{t("install.chip.seconds")}</span>
+          <span className="chip">{t("install.chip.languages")}</span>
+        </div>
+      </Card>
+
+      <Button label={t("install.button")} icon={<IconDownload />} variant="danger" size="tall" onClick={install} />
       {/* Always visible under the button, because Chrome may delay its popup (PRD F1 edge cases). */}
-      <p>{t("install.fallback")}</p>
-      {installed && <div className="panel"><strong>{t("install.done")}</strong></div>}
+      <p className="muted"><strong>{t("install.fallback")}</strong></p>
+
+      {installed && (
+        <div className="panel panel-row"><IconCheck /><strong>{t("install.done")}</strong></div>
+      )}
       {showChromeHint && !installed && (
-        <div className="panel panel-warn">
-          <strong>{t("install.openInChrome")}</strong>
-          <p className="small">{t("install.openInChromeHint")}</p>
+        <div className="panel panel-warn panel-row">
+          <IconInfo />
+          <div>
+            <strong>{t("install.openInChrome")}</strong>
+            <p className="small">{t("install.openInChromeHint")}</p>
+          </div>
         </div>
       )}
+
       <Button label={t("install.continueBrowser")} variant="quiet" onClick={continueInBrowser} />
       <p className="disclaimer">{t("app.disclaimer")}</p>
     </div>

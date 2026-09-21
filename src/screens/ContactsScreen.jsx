@@ -10,7 +10,8 @@ import { LANGUAGES } from "../lib/settings.js";
 import { getContacts, saveContacts, upsertContact, removeContact, MAX_CONTACTS, ROLES } from "../lib/contacts.js";
 import * as storage from "../lib/storage.js";
 import { navigate } from "../hooks/useHashRoute.js";
-import { Header, Button, TextField, SelectField, ChoiceField, ToggleField, focusFirstError } from "../components/ui.jsx";
+import { Header, Button, Card, TextField, SelectField, ChoiceField, ToggleField, focusFirstError } from "../components/ui.jsx";
+import { IconCheck, IconChevron, IconInfo, IconPlus, IconTrash, IconUser } from "../components/icons.jsx";
 
 export default function ContactsScreen({ params }) {
   return params[0] ? <ContactForm which={params[0]} /> : <ContactList />;
@@ -26,22 +27,23 @@ function ContactList() {
   return (
     <div className="stack">
       <Header title={t("contacts.title")} onBack={() => navigate("home")} />
-      <p>{t("contacts.intro")}</p>
-      <div className="panel panel-warn small">{t("contacts.demoRule")}</div>
+      <p className="muted">{t("contacts.intro")}</p>
+      <div className="panel panel-warn panel-row small"><IconInfo /><span>{t("contacts.demoRule")}</span></div>
 
       {contacts.length === 0 ? (
-        <p className="muted">{t("contacts.empty")}</p>
+        <Card><p className="muted">{t("contacts.empty")}</p></Card>
       ) : (
-        <ul className="list">
+        <ul className="list glass card">
           {contacts.map((c) => (
             <li key={c.id}>
               <button className="row-btn" type="button" onClick={() => navigate("contacts", [c.id])}>
+                <span className="row-icon"><IconUser /></span>
                 <span className="row-main">
                   <strong>{c.relation ? c.name + " (" + c.relation + ")" : c.name}</strong>
                   <span className="muted">{c.phone}</span>
                 </span>
                 {c.primary && <span className="badge">{t("contacts.primaryBadge")}</span>}
-                <span className="row-go" aria-hidden="true">›</span>
+                <span className="row-go"><IconChevron /></span>
               </button>
             </li>
           ))}
@@ -49,7 +51,7 @@ function ContactList() {
       )}
 
       {full && <p className="muted">{t("error.maxContacts")}</p>}
-      <Button label={t("contacts.add")} variant="primary" disabled={full} onClick={() => navigate("contacts", ["new"])} />
+      <Button label={t("contacts.add")} icon={<IconPlus />} variant="primary" disabled={full} onClick={() => navigate("contacts", ["new"])} />
     </div>
   );
 }
@@ -106,21 +108,26 @@ function ContactForm({ which }) {
   return (
     <div className="stack">
       <Header title={t("contacts.editTitle")} onBack={backToList} />
-      <div className="panel panel-warn small">{t("contacts.demoRule")}</div>
+      <div className="panel panel-warn panel-row small"><IconInfo /><span>{t("contacts.demoRule")}</span></div>
 
-      <TextField label={t("contacts.name")} value={form.name} onChange={set("name")} error={errors.name} />
-      <TextField label={t("contacts.relation")} value={form.relation} onChange={set("relation")} />
-      <TextField
-        label={t("contacts.phone")} value={form.phone} onChange={set("phone")} error={errors.phone}
-        type="tel" inputMode="tel" placeholder={t("settings.phonePlaceholder")}
-      />
-      <ToggleField label={t("contacts.primary")} hint={t("contacts.primaryHint")} checked={form.primary} onChange={set("primary")} />
-      <ChoiceField label={t("contacts.role")} value={form.role} onChange={set("role")} options={ROLES.map((r) => ({ value: r, label: roleNames[r] }))} />
-      <ToggleField label={t("contacts.livesNearby")} hint={t("contacts.livesNearbyHint")} checked={form.livesNearby} onChange={set("livesNearby")} />
-      <SelectField label={t("contacts.language")} value={form.language} onChange={set("language")} options={LANGUAGES.map((l) => ({ value: l, label: languageNames[l] }))} />
+      <Card>
+        <TextField label={t("contacts.name")} value={form.name} onChange={set("name")} error={errors.name} />
+        <TextField label={t("contacts.relation")} value={form.relation} onChange={set("relation")} />
+        <TextField
+          label={t("contacts.phone")} value={form.phone} onChange={set("phone")} error={errors.phone}
+          type="tel" inputMode="tel" placeholder={t("settings.phonePlaceholder")}
+        />
+      </Card>
 
-      <Button label={t("common.save")} variant="primary" onClick={save} />
-      {existing && <Button label={t("common.delete")} variant="danger" onClick={remove} />}
+      <Card>
+        <ToggleField label={t("contacts.primary")} hint={t("contacts.primaryHint")} checked={form.primary} onChange={set("primary")} />
+        <ChoiceField label={t("contacts.role")} value={form.role} onChange={set("role")} options={ROLES.map((r) => ({ value: r, label: roleNames[r] }))} />
+        <ToggleField label={t("contacts.livesNearby")} hint={t("contacts.livesNearbyHint")} checked={form.livesNearby} onChange={set("livesNearby")} />
+        <SelectField label={t("contacts.language")} value={form.language} onChange={set("language")} options={LANGUAGES.map((l) => ({ value: l, label: languageNames[l] }))} />
+      </Card>
+
+      <Button label={t("common.save")} icon={<IconCheck />} variant="primary" onClick={save} />
+      {existing && <Button label={t("common.delete")} icon={<IconTrash />} variant="quiet" onClick={remove} />}
     </div>
   );
 }

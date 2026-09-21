@@ -1,24 +1,85 @@
-/* tokens.css — design tokens (colours, and later type + spacing) used by styles.css.
+/* tokens.css — GoldenHour design tokens ("golden hour glass" theme, DECISIONS D19).
  *
- * STAND-IN: the redesign's css/tokens.css (docs/design/) was not in the repo when the app moved
- * to React + Vite, so these are the M1 values. To apply the redesign, replace this file with the
- * redesign's tokens.css and keep (or map) the variable names below — no component changes needed.
- * See docs/DECISIONS.md D16.
+ * Look: a warm sunrise gradient-mesh background, frosted-glass cards, pill shapes, soft glows
+ * and gentle motion. Every value the look depends on is here, so the theme can be re-tuned (or
+ * swapped for another tokens file) without touching components.
  *
- * PRD Section 9 limits still apply to any new tokens: WCAG AA contrast, red #D32F2F = emergency,
- * green = normal, amber = warning, and colour is never the only signal (always a word too).
+ * SAFETY LIMITS that any re-theme must keep (PRD Section 9):
+ *   - text contrast WCAG AA: --ink and --muted are checked against the LIGHTEST glass surface
+ *   - body >= 20px, headings >= 28px, test instructions >= 24px, buttons >= 56px tall
+ *   - red #D32F2F = emergency, green = normal, amber = warning; never colour alone (always a word)
+ *   - emergency screens (HIGH ALERT, from M2) use SOLID surfaces, not glass: maximum contrast
+ *   - all motion is decorative and switches off with prefers-reduced-motion
  */
 
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;   /* never hide text while the font loads */
+  src: url("/fonts/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2-variations");
+  /* Latin only. Hindi and Telugu fall through to the phone's Noto fonts (see --font). */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  --red: #d32f2f;        /* emergency */
+  /* ---- Type ---- */
+  --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
+    "Noto Sans Devanagari", "Noto Sans Telugu", sans-serif;
+  --text-body: 20px;
+  --text-small: 18px;          /* secondary notes only, never instructions */
+  --text-instruction: 24px;
+  --text-h1: 30px;
+  --text-h2: 28px;
+  --text-hero: 32px;
+
+  /* ---- Meaning colours (PRD) ---- */
+  --red: #d32f2f;              /* emergency */
   --red-dark: #9a1c1c;
-  --green: #2e7d32;      /* normal */
-  --amber: #ffb300;      /* warning (always with black text) */
-  --yellow: #ffeb3b;     /* demo banner */
-  --ink: #111111;
-  --muted: #444444;
-  --line: #9e9e9e;
-  --bg: #ffffff;
-  --panel: #f4f4f4;
-  --focus: #0b57d0;
+  --red-glow: rgba(211, 47, 47, 0.38);
+  --green: #1b6e22;            /* normal (darker than Material green for AA on tinted chips) */
+  --green-tint: #e2f5e4;
+  --red-tint: #fde8e6;
+  --amber: #ffb300;            /* warning (always with black text) */
+  --amber-tint: rgba(255, 236, 179, 0.82);
+  --yellow: #ffe14d;           /* demo banner */
+
+  /* ---- Ink ---- */
+  --ink: #1b1320;              /* 15:1 on the lightest glass */
+  --muted: #4a3f52;            /* 8:1 on the lightest glass */
+  --line: #6b5f73;             /* control borders: 5:1, passes the 3:1 non-text rule */
+  --on-dark: #ffffff;
+
+  /* ---- Golden-hour background ---- */
+  --bg-base: #fff6ec;
+  --orb-gold: #ffc861;
+  --orb-coral: #ff8f70;
+  --orb-violet: #b9a2ff;
+  --orb-rose: #ffb3c7;
+
+  /* ---- Glass ---- */
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.82);   /* inputs: no blur needed, stays readable */
+  --glass-solid: #fffaf4;                      /* fallback when backdrop-filter is unsupported */
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-blur: blur(18px) saturate(165%);
+  --shadow-card: 0 12px 32px rgba(122, 62, 20, 0.14), 0 2px 6px rgba(122, 62, 20, 0.08);
+  --shadow-float: 0 18px 40px rgba(60, 20, 60, 0.28);
+
+  /* ---- Brand surfaces ---- */
+  --hero-gradient: linear-gradient(135deg, #2a1533 0%, #5a1d45 55%, #8a2a3c 100%);
+  --danger-gradient: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  --ink-gradient: linear-gradient(135deg, #2a1533 0%, #43224f 100%);
+  --focus: #5b3fd6;
+  --focus-ring: 0 0 0 4px rgba(91, 63, 214, 0.45);
+
+  /* ---- Shape + motion ---- */
+  --radius-card: 26px;
+  --radius-control: 18px;
+  --radius-pill: 999px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 140ms;
+  --dur-enter: 420ms;
 }

@@ -115,7 +115,7 @@ live site. Safest option: `vite.config.js` defaults to `/goldenhour/`, and the d
 **Owner action (optional):** rename the repo to `goldenhour` (as PRD §15 step 1 says) so the local
 and live URLs are identical. Nothing in the code needs to change either way.
 
-## D16 — Redesign files were not in the repo; M1 look kept as a stand-in — OPEN
+## D16 — Redesign files were not in the repo; M1 look kept as a stand-in — SUPERSEDED by D19
 
 The owner asked to port M1 "using the redesign from docs/design/" with `css/tokens.css`. Neither
 exists in the repo, on the GitHub remote, or elsewhere on the machine (searched 2026-09-21).
@@ -137,3 +137,29 @@ With `registerType: "prompt"` Workbox installs and precaches on the first online
 controls the page from the next load. Offline use after "one online load" still works (verified:
 server stopped, reload served from cache). We do not add `skipWaiting`/`clientsClaim`, because
 swapping the running app mid-check is exactly what the update prompt is there to prevent.
+
+## D19 — Visual design: "golden hour glass" theme — SETTLED (owner request, 2026-09-21)
+
+**Request:** a modern, trending mobile look — glassmorphism, animation — with Dribbble health-app
+shots as the reference for direction (nothing copied: layout, artwork, icons and CSS are our own).
+**What was built:** warm sunrise gradient-mesh background with slowly drifting colour orbs;
+frosted-glass cards (`.glass`); pill buttons; a dark plum hero for EMERGENCY CHECK with a pulsing
+beacon and light sweep; gradient red EMERGENCY NOW; icon bubbles; a setup progress ring; iOS-style
+switches; staggered screen entrance, press feedback, toast/update-bar spring, error shake.
+Font: Plus Jakarta Sans variable (OFL-1.1) served locally from `public/fonts/` (Latin only; Hindi
+and Telugu use the phone's Noto fonts). Everything is driven by `src/css/tokens.css`.
+
+**Safety limits kept (PRD §9 wins over style):**
+- Text sizes and button sizes unchanged (20/24/28 px, ≥ 56 px buttons, ≥ 48 px targets).
+- Contrast: `--ink` ≈ 15:1 and `--muted` ≈ 8:1 on the lightest glass; white on the hero and red
+  gradients ≥ 4.5:1; control borders ≥ 3:1. Status is still a WORD + symbol + colour.
+- The DEMO MODE banner stays solid yellow with black text on every screen.
+- **Emergency screens (HIGH ALERT S13, and test instructions S10–S12) will use SOLID,
+  high-contrast surfaces, not glass.** Glass is for setup and home, where nobody is panicking.
+- All animation is decorative, transform/opacity only, and is switched off by
+  `prefers-reduced-motion`. Nothing the user must read ever waits for an animation.
+- Performance: only a few real `backdrop-filter` surfaces per screen (cards, header buttons);
+  rows and inputs are translucent fills without their own blur. `@supports` fallback to a solid
+  card where backdrop-filter is missing. To verify on a mid-range phone in M2 (arm test graph must
+  stay ≥ 50 samples/s with the background running; if not, the orbs pause during tests).
+- PRD F1 manifest colours (`theme_color #d32f2f`, white background) are unchanged.

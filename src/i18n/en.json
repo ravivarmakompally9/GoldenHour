@@ -1,13 +1,10 @@
 {
   "_note": "English is the reference language. Every key here must also exist in hi.json and te.json (checked by test/i18n.test.js). Wording marked 'exact' in the PRD must not be changed.",
-
   "app.name": "GoldenHour",
   "app.tagline": "A 60-second stroke warning-sign check for families.",
   "app.disclaimer": "GoldenHour is a screening aid that prompts people to seek emergency care. It is not a diagnostic device and does not replace a doctor.",
-
   "banner.demo": "DEMO MODE — calls go to {name}, not 108",
   "banner.demoNotSet": "DEMO MODE — no demo number saved. Calling is off.",
-
   "common.save": "Save",
   "common.saved": "Saved",
   "common.cancel": "Cancel",
@@ -18,9 +15,7 @@
   "common.no": "No",
   "common.unknown": "Unknown",
   "common.saveFailed": "Could not save on this phone. Check that storage is allowed for this site.",
-
   "update.available": "Update available — tap to reload",
-
   "install.purpose": "Turns any family member into a stroke first responder in about 60 seconds. Works offline.",
   "install.button": "Install GoldenHour",
   "install.fallback": "Tap ⋮ → Install app",
@@ -28,12 +23,10 @@
   "install.openInChromeHint": "The Install button works only in Chrome on Android. If nothing happens, use the ⋮ menu → Install app.",
   "install.done": "Installed. Open GoldenHour from your home screen.",
   "install.continueBrowser": "Continue in the browser",
-
   "language.title": "Choose your language",
   "language.en": "English",
   "language.hi": "हिंदी",
   "language.te": "తెలుగు",
-
   "home.emergencyCheck": "EMERGENCY CHECK",
   "home.emergencyCheckHint": "Someone suddenly looks unwell? Start here.",
   "home.emergencyNow": "EMERGENCY NOW",
@@ -47,13 +40,11 @@
   "home.status.notSet": "NOT SET",
   "home.status.notRecorded": "NOT RECORDED",
   "home.status.contactsCount": "{count} SAVED",
-
   "placeholder.title": "Not built yet",
   "placeholder.check": "The emergency check is not part of this version yet. Nothing was tested and no alert was sent.",
   "placeholder.baseline": "Baseline recording is not part of this version yet.",
   "placeholder.realEmergency": "If this is a real emergency, call 108 from your phone's dialer now.",
   "placeholder.backHome": "Back to Home",
-
   "settings.title": "Settings",
   "settings.language": "Language",
   "settings.demoMode": "Demo Mode",
@@ -79,14 +70,12 @@
   "settings.reset": "Reset all data",
   "settings.resetConfirm": "Delete all GoldenHour data on this phone? This cannot be undone.",
   "settings.resetDone": "All data deleted.",
-
   "error.phone_emergency_blocked": "Demo Mode: emergency numbers are blocked. Enter a teammate's mobile.",
   "error.phone_invalid": "Enter a 10-digit Indian mobile number starting with 6, 7, 8 or 9.",
   "error.nameRequired": "Name is required.",
   "error.ageInvalid": "Enter an age between 0 and 120, or leave it empty.",
   "error.consentRequired": "Please tick the box to confirm they agree.",
   "error.maxContacts": "You can save up to 5 contacts.",
-
   "profile.title": "Medical profile",
   "profile.intro": "The facts an emergency doctor needs in the first minutes.",
   "profile.fictional": "Hackathon demo: enter fictional data only, for example Lakshmi, 68.",
@@ -106,7 +95,6 @@
   "profile.otherConditionsHint": "For example a previous stroke or a heart rhythm problem.",
   "profile.privacy": "GoldenHour stores this information only on this phone. It is shared only if you send an emergency alert.",
   "profile.consent": "The person being protected agrees to this setup.",
-
   "contacts.title": "Emergency contacts",
   "contacts.intro": "Up to 5 people who are alerted during a HIGH ALERT.",
   "contacts.demoRule": "Demo rule: add only teammates or friends who agreed to receive test messages. Never real relatives or strangers.",
@@ -125,5 +113,20 @@
   "contacts.livesNearby": "Lives nearby",
   "contacts.livesNearbyHint": "Nearby contacts are asked to come now. Others get hospital details.",
   "contacts.language": "Message language",
-  "contacts.deleteConfirm": "Delete {name}?"
+  "contacts.deleteConfirm": "Delete {name}?",
+  "common.on": "ON",
+  "common.off": "OFF",
+  "home.tag": "Stroke check · works offline",
+  "home.progress": "{done} of {total} set up",
+  "home.progressHint": "Finish setup while everyone is healthy.",
+  "home.progressDone": "Setup complete. Ready for an emergency.",
+  "install.chip.offline": "Works offline",
+  "install.chip.seconds": "About 60 seconds",
+  "install.chip.languages": "English · हिंदी · తెలుగు",
+  "settings.section.demo": "Demo Mode",
+  "settings.section.ai": "AI explanation",
+  "settings.section.app": "App",
+  "profile.section.person": "Person",
+  "profile.section.health": "Health",
+  "profile.section.consent": "Privacy"
 }

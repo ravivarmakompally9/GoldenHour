@@ -1,13 +1,10 @@
 {
   "_note": "NEEDS NATIVE SPEAKER REVIEW — machine-drafted Hindi. A native speaker must check every string before the demo (PRD constraint C17). Keep 108 and {placeholders} unchanged.",
-
   "app.name": "GoldenHour",
   "app.tagline": "परिवार के लिए 60 सेकंड की स्ट्रोक चेतावनी-संकेत जाँच।",
   "app.disclaimer": "GoldenHour एक स्क्रीनिंग सहायता है जो लोगों को आपातकालीन इलाज लेने के लिए प्रेरित करती है। यह कोई निदान उपकरण नहीं है और डॉक्टर की जगह नहीं लेता।",
-
   "banner.demo": "डेमो मोड — कॉल {name} को जाएगी, 108 को नहीं",
   "banner.demoNotSet": "डेमो मोड — कोई डेमो नंबर सेव नहीं है। कॉल बंद है।",
-
   "common.save": "सेव करें",
   "common.saved": "सेव हो गया",
   "common.cancel": "रद्द करें",
@@ -18,9 +15,7 @@
   "common.no": "नहीं",
   "common.unknown": "पता नहीं",
   "common.saveFailed": "इस फ़ोन पर सेव नहीं हो सका। जाँचें कि इस साइट के लिए स्टोरेज की अनुमति है।",
-
   "update.available": "अपडेट उपलब्ध है — रीलोड करने के लिए टैप करें",
-
   "install.purpose": "परिवार के किसी भी सदस्य को लगभग 60 सेकंड में स्ट्रोक का पहला मददगार बनाता है। बिना इंटरनेट के चलता है।",
   "install.button": "GoldenHour इंस्टॉल करें",
   "install.fallback": "⋮ टैप करें → ऐप इंस्टॉल करें",
@@ -28,12 +23,10 @@
   "install.openInChromeHint": "इंस्टॉल बटन केवल Android के Chrome में काम करता है। अगर कुछ न हो, तो ⋮ मेनू → ऐप इंस्टॉल करें चुनें।",
   "install.done": "इंस्टॉल हो गया। होम स्क्रीन से GoldenHour खोलें।",
   "install.continueBrowser": "ब्राउज़र में जारी रखें",
-
   "language.title": "अपनी भाषा चुनें",
   "language.en": "English",
   "language.hi": "हिंदी",
   "language.te": "తెలుగు",
-
   "home.emergencyCheck": "आपातकालीन जाँच",
   "home.emergencyCheckHint": "कोई अचानक बीमार दिख रहा है? यहाँ से शुरू करें।",
   "home.emergencyNow": "अभी आपातकाल",
@@ -47,13 +40,11 @@
   "home.status.notSet": "सेट नहीं",
   "home.status.notRecorded": "रिकॉर्ड नहीं",
   "home.status.contactsCount": "{count} सेव",
-
   "placeholder.title": "अभी बना नहीं है",
   "placeholder.check": "आपातकालीन जाँच अभी इस संस्करण में नहीं है। कोई जाँच नहीं हुई और कोई अलर्ट नहीं भेजा गया।",
   "placeholder.baseline": "बेसलाइन रिकॉर्डिंग अभी इस संस्करण में नहीं है।",
   "placeholder.realEmergency": "अगर यह सच में आपातकाल है, तो अभी अपने फ़ोन के डायलर से 108 पर कॉल करें।",
   "placeholder.backHome": "होम पर वापस",
-
   "settings.title": "सेटिंग्स",
   "settings.language": "भाषा",
   "settings.demoMode": "डेमो मोड",
@@ -79,14 +70,12 @@
   "settings.reset": "सारा डेटा मिटाएँ",
   "settings.resetConfirm": "इस फ़ोन से GoldenHour का सारा डेटा मिटाएँ? यह वापस नहीं हो सकता।",
   "settings.resetDone": "सारा डेटा मिटा दिया गया।",
-
   "error.phone_emergency_blocked": "डेमो मोड: आपातकालीन नंबर ब्लॉक हैं। किसी साथी का मोबाइल नंबर डालें।",
   "error.phone_invalid": "6, 7, 8 या 9 से शुरू होने वाला 10 अंकों का भारतीय मोबाइल नंबर डालें।",
   "error.nameRequired": "नाम ज़रूरी है।",
   "error.ageInvalid": "0 से 120 के बीच उम्र लिखें, या खाली छोड़ दें।",
   "error.consentRequired": "कृपया बॉक्स पर टिक करके पुष्टि करें कि वे सहमत हैं।",
   "error.maxContacts": "आप अधिकतम 5 संपर्क सेव कर सकते हैं।",
-
   "profile.title": "मेडिकल प्रोफ़ाइल",
   "profile.intro": "वे बातें जो आपातकालीन डॉक्टर को पहले कुछ मिनटों में चाहिए।",
   "profile.fictional": "हैकथॉन डेमो: केवल काल्पनिक जानकारी डालें, जैसे लक्ष्मी, 68।",
@@ -106,7 +95,6 @@
   "profile.otherConditionsHint": "जैसे पहले हुआ स्ट्रोक या दिल की धड़कन की समस्या।",
   "profile.privacy": "GoldenHour यह जानकारी केवल इसी फ़ोन पर रखता है। यह तभी साझा होती है जब आप आपातकालीन अलर्ट भेजते हैं।",
   "profile.consent": "जिस व्यक्ति की सुरक्षा की जा रही है, वह इस सेटअप से सहमत है।",
-
   "contacts.title": "आपातकालीन संपर्क",
   "contacts.intro": "अधिकतम 5 लोग, जिन्हें HIGH ALERT के समय सूचना दी जाती है।",
   "contacts.demoRule": "डेमो नियम: केवल वे साथी या दोस्त जोड़ें जो टेस्ट संदेश पाने के लिए सहमत हैं। असली रिश्तेदार या अजनबी कभी नहीं।",
@@ -125,5 +113,20 @@
   "contacts.livesNearby": "पास में रहते हैं",
   "contacts.livesNearbyHint": "पास वालों को तुरंत आने को कहा जाता है। बाकी को अस्पताल की जानकारी मिलती है।",
   "contacts.language": "संदेश की भाषा",
-  "contacts.deleteConfirm": "{name} को हटाएँ?"
+  "contacts.deleteConfirm": "{name} को हटाएँ?",
+  "common.on": "चालू",
+  "common.off": "बंद",
+  "home.tag": "स्ट्रोक जाँच · बिना इंटरनेट के",
+  "home.progress": "{total} में से {done} सेटअप पूरे",
+  "home.progressHint": "जब सब स्वस्थ हों, तभी सेटअप पूरा कर लें।",
+  "home.progressDone": "सेटअप पूरा। आपातकाल के लिए तैयार।",
+  "install.chip.offline": "बिना इंटरनेट के चलता है",
+  "install.chip.seconds": "लगभग 60 सेकंड",
+  "install.chip.languages": "English · हिंदी · తెలుగు",
+  "settings.section.demo": "डेमो मोड",
+  "settings.section.ai": "AI व्याख्या",
+  "settings.section.app": "ऐप",
+  "profile.section.person": "व्यक्ति",
+  "profile.section.health": "स्वास्थ्य",
+  "profile.section.consent": "गोपनीयता"
 }

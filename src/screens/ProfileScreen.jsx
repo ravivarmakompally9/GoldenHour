@@ -7,7 +7,8 @@ import { useAppState } from "../state/AppState.jsx";
 import { getProfile, saveProfile, validateProfile, SEXES, BLOOD_GROUPS } from "../lib/profile.js";
 import * as storage from "../lib/storage.js";
 import { navigate } from "../hooks/useHashRoute.js";
-import { Header, Button, TextField, SelectField, ChoiceField, ToggleField, focusFirstError } from "../components/ui.jsx";
+import { Header, Button, Card, TextField, SelectField, ChoiceField, ToggleField, focusFirstError } from "../components/ui.jsx";
+import { IconCheck, IconInfo, IconPulse, IconShield, IconUser } from "../components/icons.jsx";
 
 export default function ProfileScreen() {
   const { t, toast } = useAppState();
@@ -48,29 +49,36 @@ export default function ProfileScreen() {
   return (
     <div className="stack">
       <Header title={t("profile.title")} onBack={goHome} />
-      <p>{t("profile.intro")}</p>
-      <div className="panel panel-warn small">{t("profile.fictional")}</div>
+      <p className="muted">{t("profile.intro")}</p>
+      <div className="panel panel-warn panel-row small"><IconInfo /><span>{t("profile.fictional")}</span></div>
 
-      <TextField label={t("profile.name")} value={form.name} onChange={set("name")} error={errors.name} />
-      <TextField label={t("profile.age")} value={form.age} onChange={set("age")} error={errors.age} type="number" inputMode="numeric" />
-      <ChoiceField label={t("profile.sex")} value={form.sex} onChange={set("sex")} options={SEXES.map((s) => ({ value: s, label: sexNames[s] }))} />
-      {/* Blood groups are international symbols, so only "unknown" needs translating. */}
-      <SelectField
-        label={t("profile.bloodGroup")} value={form.bloodGroup} onChange={set("bloodGroup")}
-        options={BLOOD_GROUPS.map((g) => ({ value: g, label: g === "unknown" ? t("common.unknown") : g }))}
-      />
-      <ChoiceField label={t("profile.diabetic")} value={form.diabetic} onChange={set("diabetic")} options={yesNoUnknown} />
-      <ChoiceField label={t("profile.bpMedicine")} value={form.bpMedicine} onChange={set("bpMedicine")} options={yesNoUnknown} />
-      <ChoiceField label={t("profile.bloodThinners")} value={form.bloodThinners} onChange={set("bloodThinners")} options={yesNoUnknown} />
-      <TextField label={t("profile.bloodThinnerName")} value={form.bloodThinnerName} onChange={set("bloodThinnerName")} hidden={form.bloodThinners !== "yes"} />
-      <TextField label={t("profile.allergies")} value={form.allergies} onChange={set("allergies")} multiline />
-      <TextField label={t("profile.otherConditions")} value={form.otherConditions} onChange={set("otherConditions")} hint={t("profile.otherConditionsHint")} multiline />
+      <Card title={t("profile.section.person")} icon={<IconUser />}>
+        <TextField label={t("profile.name")} value={form.name} onChange={set("name")} error={errors.name} />
+        <TextField label={t("profile.age")} value={form.age} onChange={set("age")} error={errors.age} type="number" inputMode="numeric" />
+        <ChoiceField label={t("profile.sex")} value={form.sex} onChange={set("sex")} options={SEXES.map((s) => ({ value: s, label: sexNames[s] }))} />
+        {/* Blood groups are international symbols, so only "unknown" needs translating. */}
+        <SelectField
+          label={t("profile.bloodGroup")} value={form.bloodGroup} onChange={set("bloodGroup")}
+          options={BLOOD_GROUPS.map((g) => ({ value: g, label: g === "unknown" ? t("common.unknown") : g }))}
+        />
+      </Card>
+
+      <Card title={t("profile.section.health")} icon={<IconPulse />}>
+        <ChoiceField label={t("profile.diabetic")} value={form.diabetic} onChange={set("diabetic")} options={yesNoUnknown} />
+        <ChoiceField label={t("profile.bpMedicine")} value={form.bpMedicine} onChange={set("bpMedicine")} options={yesNoUnknown} />
+        <ChoiceField label={t("profile.bloodThinners")} value={form.bloodThinners} onChange={set("bloodThinners")} options={yesNoUnknown} />
+        <TextField label={t("profile.bloodThinnerName")} value={form.bloodThinnerName} onChange={set("bloodThinnerName")} hidden={form.bloodThinners !== "yes"} />
+        <TextField label={t("profile.allergies")} value={form.allergies} onChange={set("allergies")} multiline />
+        <TextField label={t("profile.otherConditions")} value={form.otherConditions} onChange={set("otherConditions")} hint={t("profile.otherConditionsHint")} multiline />
+      </Card>
 
       {/* PRD Section 18 (consent): exact wording, and the Setup User must tick the box. */}
-      <div className="panel">{t("profile.privacy")}</div>
-      <ToggleField label={t("profile.consent")} checked={form.consent} onChange={set("consent")} error={errors.consent} />
+      <Card title={t("profile.section.consent")} icon={<IconShield />}>
+        <p>{t("profile.privacy")}</p>
+        <ToggleField label={t("profile.consent")} checked={form.consent} onChange={set("consent")} error={errors.consent} />
+      </Card>
 
-      <Button label={t("common.save")} variant="primary" onClick={save} />
+      <Button label={t("common.save")} icon={<IconCheck />} variant="primary" onClick={save} />
     </div>
   );
 }

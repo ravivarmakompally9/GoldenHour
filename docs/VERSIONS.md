@@ -20,7 +20,7 @@ browser caches.
 | File(s) | What | Version | Source URL | Added in |
 | --- | --- | --- | --- | --- |
 | `public/icons/icon-*.png` | App icons | own artwork | generated in-house | WS0 |
-| _none yet_ | | | | |
+| `public/fonts/plus-jakarta-sans-latin-wght-normal.woff2` (+ `PlusJakartaSans-LICENSE.txt`) | Plus Jakarta Sans variable font, Latin subset, SIL OFL 1.1 | @fontsource-variable/plus-jakarta-sans 5.3.0 | https://www.npmjs.com/package/@fontsource-variable/plus-jakarta-sans/v/5.3.0 (file `files/plus-jakarta-sans-latin-wght-normal.woff2`) | WS0 redesign |
 
 ## Planned (added by the workstream that first needs them)
 
@@ -30,4 +30,3 @@ browser caches.
 | `@mediapipe/tasks-vision` (npm) + its `wasm/` folder copied to `public/vendor/mediapipe/wasm/` at the SAME version + `public/models/face_landmarker.task` | F7 face test | WS1 (M3) |
 | `qrcode-generator`, `html2canvas` (npm) | F13 Doctor Card | WS5 (M4) |
 | `@huggingface/transformers` (npm, in a Web Worker) | F8 speech test | WS3 (M5) |
-| Redesign fonts (woff2) in `public/fonts/` | UI | when docs/design/ arrives (D16) |

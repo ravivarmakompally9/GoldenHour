@@ -8,7 +8,7 @@ import { resolveRoute } from "./lib/router.js";
 import { isStandalone, wasInstallSkipped } from "./pwa/installPrompt.js";
 import { useAppUpdate } from "./pwa/useAppUpdate.js";
 import { stop as stopVoice } from "./lib/tts.js";
-import { DemoBanner, Toast } from "./components/ui.jsx";
+import { Backdrop, DemoBanner, Toast } from "./components/ui.jsx";
 
 import InstallScreen from "./screens/InstallScreen.jsx";
 import LanguageScreen from "./screens/LanguageScreen.jsx";
@@ -52,6 +52,7 @@ export default function App() {
 
   return (
     <>
+      <Backdrop />
       <DemoBanner />
       <main className="app">
         {/* key: a fresh screen (and fresh form state) for every route */}

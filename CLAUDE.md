@@ -83,6 +83,12 @@ Open questions and resolved conflicts live in `docs/DECISIONS.md` — read it to
 - Target: Chrome for Android, portrait phones. UI rules (PRD §9): body ≥ 20px, headings ≥ 28px,
   test instructions ≥ 24px, buttons ≥ 56px tall, touch targets ≥ 48×48, WCAG AA, red `#D32F2F`,
   never colour alone (always a word), yellow DEMO MODE banner on every screen.
+- **Look (D19): "golden hour glass".** Use the tokens in `src/css/tokens.css` and the shared
+  pieces in `src/components/ui.jsx` (`Card`, `Button`, `Header`, fields, `StatusWord`) and
+  `icons.jsx` — do not invent new colours, radii or one-off components. Glass (`.glass`/`Card`)
+  is for setup and home; **emergency and test-instruction screens use solid high-contrast
+  surfaces.** Animations: transform/opacity only, decorative only, and they must respect
+  `prefers-reduced-motion`. Give every inline SVG an explicit size. Max ~3 glass cards per screen.
 - Every threshold lives in `src/lib/thresholds.js`. Never hardcode thresholds in test modules.
 - Every user-facing string lives in `src/i18n/en.json`, `hi.json`, `te.json` (bundled, so they
   work offline). Hindi/Telugu files carry a "NEEDS NATIVE SPEAKER REVIEW" note (C17). Use literal

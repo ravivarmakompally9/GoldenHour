@@ -7,6 +7,28 @@
 import { useId } from "react";
 import { useAppState } from "../state/AppState.jsx";
 import { isDemoReady } from "../lib/settings.js";
+import { IconAlert, IconBack, IconLock } from "./icons.jsx";
+
+// ---------- Background + glass ----------
+
+/** The golden-hour backdrop: soft colour orbs drifting slowly behind every screen. */
+export function Backdrop() {
+  return (
+    <div className="bg" aria-hidden="true">
+      <span className="orb orb-1" /><span className="orb orb-2" /><span className="orb orb-3" /><span className="orb orb-4" />
+    </div>
+  );
+}
+
+/** A frosted-glass card. Use a FEW per screen: each one is a real backdrop blur (GPU cost). */
+export function Card({ title, icon, children, className = "" }) {
+  return (
+    <section className={"glass card " + className}>
+      {title && <h2 className="card-title">{icon}{title}</h2>}
+      {children}
+    </section>
+  );
+}
 
 // ---------- Demo banner (every screen) ----------
 
@@ -26,7 +48,7 @@ export function Header({ title, onBack, right }) {
   return (
     <header className="screen-header">
       {onBack && (
-        <button className="icon-btn" type="button" aria-label={t("common.back")} onClick={onBack}>←</button>
+        <button className="icon-btn glass" type="button" aria-label={t("common.back")} onClick={onBack}><IconBack /></button>
       )}
       <h1>{title}</h1>
       {right}
@@ -34,12 +56,13 @@ export function Header({ title, onBack, right }) {
   );
 }
 
-/** Full-width button. variant: "primary" | "danger" | "quiet"; size: "huge" | "tall". */
-export function Button({ label, sub, variant = "", size = "", onClick, disabled = false }) {
-  const classes = ["btn", variant && "btn-" + variant, size && "btn-" + size].filter(Boolean).join(" ");
+/** Full-width pill button. variant: "primary" | "danger" | "quiet"; size: "huge" | "tall". */
+export function Button({ label, sub, icon, top, variant = "", size = "", className = "", onClick, disabled = false }) {
+  const classes = ["btn", variant && "btn-" + variant, size && "btn-" + size, className].filter(Boolean).join(" ");
   return (
     <button className={classes} type="button" onClick={onClick} disabled={disabled}>
-      {label}
+      {top}
+      <span className="btn-row">{icon}{label}</span>
       {sub && <small>{sub}</small>}
     </button>
   );
@@ -51,7 +74,7 @@ export function Button({ label, sub, variant = "", size = "", onClick, disabled 
  */
 export function EmergencyNowButton({ onClick }) {
   const { t } = useAppState();
-  return <Button label={t("home.emergencyNow")} variant="danger" size="tall" onClick={onClick} />;
+  return <Button label={t("home.emergencyNow")} icon={<IconAlert />} variant="danger" size="tall" onClick={onClick} />;
 }
 
 // ---------- Form fields (all controlled: value + onChange) ----------
@@ -108,15 +131,18 @@ export function ChoiceField({ label, value, onChange, options }) {
   );
 }
 
-export function ToggleField({ label, hint, checked, onChange, disabled = false, error }) {
+/** A switch (a real checkbox underneath). The state is also written as a word: ON / OFF. */
+export function ToggleField({ label, hint, checked, onChange, disabled = false, locked = false, error }) {
+  const { t } = useAppState();
   return (
     <div className="field">
-      <label className="toggle">
+      <label className={"toggle" + (locked ? " is-locked" : "")}>
         <span className="toggle-text">
           <strong>{label}</strong>
           {hint && <span className="field-hint">{hint}</span>}
         </span>
-        <input type="checkbox" checked={checked} disabled={disabled} onChange={(event) => onChange && onChange(event.target.checked)} />
+        <span className="toggle-state">{locked && <IconLock />}{checked ? t("common.on") : t("common.off")}</span>
+        <input type="checkbox" role="switch" checked={checked} disabled={disabled || locked} onChange={(event) => onChange && onChange(event.target.checked)} />
       </label>
       <FieldError message={error} />
     </div>

@@ -6,7 +6,8 @@ import { useAppState } from "../state/AppState.jsx";
 import { validatePhone, getApiKey, setApiKey, LANGUAGES, LLM_PROVIDERS } from "../lib/settings.js";
 import * as storage from "../lib/storage.js";
 import { navigate } from "../hooks/useHashRoute.js";
-import { Header, Button, TextField, SelectField, ToggleField, focusFirstError } from "../components/ui.jsx";
+import { Header, Button, Card, TextField, SelectField, ToggleField, focusFirstError } from "../components/ui.jsx";
+import { IconAlert, IconCheck, IconSettings, IconShield, IconTrash, IconWave } from "../components/icons.jsx";
 
 export default function SettingsScreen() {
   const { settings, saveSettings, resetAll, t, toast } = useAppState();
@@ -81,47 +82,51 @@ export default function SettingsScreen() {
 
       {/* Also what a CALL button shows when no demo number exists yet (DECISIONS D6). */}
       {!settings.demoEmergencyNumber && (
-        <div className="panel panel-warn"><strong>{t("settings.addDemoNumber")}</strong></div>
+        <div className="panel panel-warn panel-row"><IconAlert /><strong>{t("settings.addDemoNumber")}</strong></div>
       )}
 
-      {/* Language applies at once (no Save needed), so a helper who cannot read the current
-          language is never stuck hunting for a Save button. */}
-      <SelectField
-        label={t("settings.language")}
-        value={settings.language}
-        onChange={(language) => saveSettings({ language, languageChosen: true })}
-        options={LANGUAGES.map((l) => ({ value: l, label: languageNames[l] }))}
-      />
+      <Card title={t("settings.section.demo")} icon={<IconShield />}>
+        {/* Demo Mode: a switch that is ON and LOCKED. No code path in Part 1 turns it off
+            (see normaliseSettings in src/lib/settings.js). */}
+        <ToggleField label={t("settings.demoMode")} hint={t("settings.demoLocked")} checked locked />
+        <TextField label={t("settings.demoName")} value={form.demoEmergencyName} onChange={set("demoEmergencyName")} error={errors.demoEmergencyName} />
+        <TextField
+          label={t("settings.demoNumber")} value={form.demoEmergencyNumber} onChange={set("demoEmergencyNumber")}
+          error={errors.demoEmergencyNumber} hint={t("settings.demoNumberHint")}
+          type="tel" inputMode="tel" placeholder={t("settings.phonePlaceholder")}
+        />
+        <TextField
+          label={t("settings.hospitalNumber")} value={form.demoHospitalNumber} onChange={set("demoHospitalNumber")}
+          error={errors.demoHospitalNumber} hint={t("settings.hospitalHint")}
+          type="tel" inputMode="tel" placeholder={t("settings.phonePlaceholder")}
+        />
+      </Card>
 
-      {/* Demo Mode: a switch that is ON and cannot be moved. No code path in Part 1 turns it off
-          (see normaliseSettings in src/lib/settings.js). */}
-      <ToggleField label={t("settings.demoMode")} hint={t("settings.demoLocked")} checked disabled />
+      <Card title={t("settings.section.ai")} icon={<IconWave />}>
+        <SelectField
+          label={t("settings.llmProvider")} value={form.llmProvider} onChange={set("llmProvider")}
+          options={LLM_PROVIDERS.map((p) => ({ value: p, label: providerNames[p] }))}
+        />
+        {/* type="password" hides the key from people looking at the screen (and from screenshots). */}
+        <TextField label={t("settings.keyGemini")} value={form.keyGemini} onChange={set("keyGemini")} type="password" hint={t("settings.keyHint")} />
+        <TextField label={t("settings.keyOpenrouter")} value={form.keyOpenrouter} onChange={set("keyOpenrouter")} type="password" />
+      </Card>
 
-      <TextField label={t("settings.demoName")} value={form.demoEmergencyName} onChange={set("demoEmergencyName")} error={errors.demoEmergencyName} />
-      <TextField
-        label={t("settings.demoNumber")} value={form.demoEmergencyNumber} onChange={set("demoEmergencyNumber")}
-        error={errors.demoEmergencyNumber} hint={t("settings.demoNumberHint")}
-        type="tel" inputMode="tel" placeholder={t("settings.phonePlaceholder")}
-      />
-      <TextField
-        label={t("settings.hospitalNumber")} value={form.demoHospitalNumber} onChange={set("demoHospitalNumber")}
-        error={errors.demoHospitalNumber} hint={t("settings.hospitalHint")}
-        type="tel" inputMode="tel" placeholder={t("settings.phonePlaceholder")}
-      />
+      <Card title={t("settings.section.app")} icon={<IconSettings />}>
+        {/* Language applies at once (no Save needed), so a helper who cannot read the current
+            language is never stuck hunting for a Save button. */}
+        <SelectField
+          label={t("settings.language")}
+          value={settings.language}
+          onChange={(language) => saveSettings({ language, languageChosen: true })}
+          options={LANGUAGES.map((l) => ({ value: l, label: languageNames[l] }))}
+        />
+        <ToggleField label={t("settings.voice")} checked={form.voice} onChange={set("voice")} />
+        <ToggleField label={t("settings.developer")} hint={t("settings.developerHint")} checked={form.developerMode} onChange={set("developerMode")} />
+      </Card>
 
-      <SelectField
-        label={t("settings.llmProvider")} value={form.llmProvider} onChange={set("llmProvider")}
-        options={LLM_PROVIDERS.map((p) => ({ value: p, label: providerNames[p] }))}
-      />
-      {/* type="password" hides the key from people looking at the screen (and from screenshots). */}
-      <TextField label={t("settings.keyGemini")} value={form.keyGemini} onChange={set("keyGemini")} type="password" hint={t("settings.keyHint")} />
-      <TextField label={t("settings.keyOpenrouter")} value={form.keyOpenrouter} onChange={set("keyOpenrouter")} type="password" hint={t("settings.keyHint")} />
-
-      <ToggleField label={t("settings.voice")} checked={form.voice} onChange={set("voice")} />
-      <ToggleField label={t("settings.developer")} hint={t("settings.developerHint")} checked={form.developerMode} onChange={set("developerMode")} />
-
-      <Button label={t("common.save")} variant="primary" onClick={save} />
-      <Button label={t("settings.reset")} variant="danger" onClick={reset} />
+      <Button label={t("common.save")} icon={<IconCheck />} variant="primary" onClick={save} />
+      <Button label={t("settings.reset")} icon={<IconTrash />} variant="quiet" onClick={reset} />
     </div>
   );
 }
