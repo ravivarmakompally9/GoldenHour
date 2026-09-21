@@ -163,3 +163,43 @@ and Telugu use the phone's Noto fonts). Everything is driven by `src/css/tokens.
   card where backdrop-filter is missing. To verify on a mid-range phone in M2 (arm test graph must
   stay ≥ 50 samples/s with the background running; if not, the orbs pause during tests).
 - PRD F1 manifest colours (`theme_color #d32f2f`, white background) are unchanged.
+
+## D20 — M2 runs only the arm test; face and speech are NOT_TESTED, and the screen says so — SETTLED (owner OK)
+
+Until M3/M5, the check flow records face and speech as `NOT_TESTED` with the reason "not available
+in this version" (never NORMAL, never a fake run). Under the PRD rules (R5) a NORMAL arm test then
+gives NO_CLEAR_SIGNS, so S14 adds the line "Only the arm test was run. Face and speech were not
+checked." next to the fixed PRD wording. No sensors at all → all three NOT_TESTED → amber
+COULD_NOT_TEST screen (R4).
+
+## D21 — SMS says "Call 108 if not already called." instead of "108 called." — SETTLED (owner OK)
+
+The PRD SMS template states "108 called." as a fact, but a PWA cannot know whether a call was made.
+A wrong "108 called" could make family assume help is coming. The line becomes
+"Call 108 if not already called." (plain ASCII, same length class). Deviation from PRD F12.
+
+## D22 — Arm test: the helper taps "Phone is on the palm" before the readiness wait — SETTLED
+
+PRD F9 starts the recording automatically once the phone is flat and steady. A phone lying on a
+table while the instructions are read is also flat and steady, so the test would start (and pass)
+with nobody holding it. Safest option: the helper taps one button when the phone is on the palm;
+the app THEN waits for flat + steady (1 s), vibrates, settles 2 s and records 10 s. One extra tap
+per arm; no result can come from a phone on a table unless someone deliberately taps.
+
+## D23 — Arm test ends at once when an arm cannot do it or the phone drops — SETTLED
+
+If the left arm is NOT_COMPLETED (dropped, or helper taps "They cannot do this test"), the right
+arm is skipped: the result is already a warning sign and testing must never delay help (C11/C12).
+
+## D24 — Test modules report state; React draws the words — SETTLED
+
+The PRD contract `run({ mode, container, baseline, thresholds, camera })` is kept. Two optional
+extras are added: `onUpdate(state)` (phase, arm, seconds left, readiness) and, for the arm module,
+the exports `armPlaced()` and `cannotDo()`. The module draws only its live graph into `container`;
+instructions are rendered by the screen from i18n, so modules stay free of React AND of strings.
+`TestResult.message` holds an i18n KEY (plus `messageVars`), not English text.
+
+## D25 — M2 merge plan — SETTLED (owner OK)
+
+`ws2-arm` is tested alone on the phone via the `dev/arm.html` harness, then `ws4-alerts` is built
+on top; one combined merge + deploy at the end of M2.
