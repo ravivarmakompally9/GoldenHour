@@ -32,7 +32,7 @@ function show(state) {
   $("count").textContent = state.secondsLeft === null ? "" : t("arm.secondsLeft", { seconds: state.secondsLeft });
   $("ready").textContent = state.phase === "waiting" ? "flat: " + (state.flat ? "yes" : "NO") + " · steady: " + (state.steady ? "yes" : "NO") : "";
   $("live").textContent = state.dBeta === null ? "" : "Δβ " + state.dBeta.toFixed(1) + "°  Δγ " + state.dGamma.toFixed(1) + "°";
-  $("rate").textContent = "sensor: " + state.sampleRate + " samples/s";
+  $("rate").textContent = "orientation events: " + state.eventRate + "/s (low = steady, OK) · motion events: " + state.motionRate + "/s";
   $("placed").disabled = state.phase !== "place";
   $("cannot").disabled = !running;
   $("abort").disabled = !running;

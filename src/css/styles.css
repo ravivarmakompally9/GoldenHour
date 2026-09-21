@@ -538,7 +538,9 @@ body[data-surface="solid"] .toast, body[data-surface="solid"] .update-bar { bott
 .check-screen.no-bar { padding-bottom: 0; }
 
 .step-label { font-weight: 800; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-size: var(--text-small); margin: 0; }
-.arm-label { font-size: 40px; letter-spacing: -0.02em; }
+.arm-label { font-size: 36px; letter-spacing: -0.02em; }
+.check-screen .instruction { margin: 0; line-height: 1.3; }
+.check-screen.stack > * + * { margin-top: 12px; }
 .countdown-number { font-size: 64px; font-weight: 800; line-height: 1; margin: 0; text-align: center; font-variant-numeric: tabular-nums; }
 .tilt-graph { height: 220px; background: #fff; border: 2px solid var(--ink); border-radius: 18px; padding: 8px; }
 
@@ -577,6 +579,19 @@ a.btn { text-decoration: none; }
 .check-bar .btn svg { width: 22px; height: 22px; }
 
 .time-input { width: 100%; min-height: 72px; font: inherit; font-size: 32px; font-weight: 700; padding: 10px 16px; border: 2px solid var(--ink); border-radius: var(--radius-control); background: #fff; color: var(--ink); }
+
+
+/* Arm test: which arm, and where we are inside that arm's test. */
+.arm-of { margin: 0; font-weight: 800; color: var(--muted); }
+.phase-track { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0; padding: 0; }
+.phase-track li { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 14px; font-weight: 700; color: var(--muted); line-height: 1.15; }
+.phase-dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line); background: #fff; font-weight: 800; font-size: 16px; }
+.phase-track .is-now { color: var(--ink); }
+.phase-track .is-now .phase-dot { background: var(--ink); border-color: var(--ink); color: #fff; transform: scale(1.12); }
+.phase-track .is-done .phase-dot { background: var(--green-tint); border-color: var(--green); color: var(--green); }
+.ready-check { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-weight: 700; padding: 8px 12px; border-radius: 14px; }
+.ready-check.is-ok { background: var(--green-tint); color: var(--green); }
+.ready-check.is-wait { background: #fff3cd; color: #000; }
 
 /* ---- HIGH ALERT ---- */
 .alert-screen { color: #ffffff; }

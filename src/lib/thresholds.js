@@ -65,8 +65,11 @@ export const DEFAULT_THRESHOLDS = {
     endWindowMs: 2000,            // end angles = mean of the last 2 s
     dropAngleDeg: 45,             // any sample this far from the start angle = arm fell
     dropAccel: 20,                // m/s^2 spike = phone dropped -> NOT_COMPLETED
-    minSamplesPerSecond: 20,      // fewer orientation samples than this = NOT_TESTED (technical)
-    sensorCheckMs: 2000,          // no orientation event within 2 s = no sensors -> NOT_TESTED
+    sampleStepMs: 20,             // angles are resampled (sample-and-hold) 50 times a second
+    minSamplesPerSecond: 20,      // fewer RESAMPLED samples than this = recording cut short (technical)
+    maxSensorSilenceMs: 3000,     // no motion AND no orientation event for this long = sensors stopped
+    sensorCheckMs: 4000,          // no orientation event within 4 s = no sensors -> NOT_TESTED
+                                  // (generous: a still phone sends its first event late)
     readyHintMs: 15000,           // still not flat+steady after 15 s -> show the "hold flatter" hint
     restMs: 1500                  // pause after each arm ("Open your eyes and lower your arm")
   },

@@ -226,3 +226,26 @@ Links are recorded as "opened", never "sent": a PWA cannot know whether Send was
 Two fields beyond the PRD §13 Session shape: `person: { name, age }` (for the SMS and, later, the
 Doctor Card; it is NEVER part of the LLM payload — C4) and `familyAlert`. A session that already
 has a decision is finished and is never reused for a new check or a later EMERGENCY NOW.
+
+## D29 — Arm angles are read by sample-and-hold; sensor failure = real silence, not few events — SETTLED (found on the owner's phone, 2026-09-21)
+
+**Bug:** first real-phone run gave "Not enough sensor data" for a steady left arm while the right
+arm (which moved 2.6°) was measured. **Cause:** Chrome on Android fires `deviceorientation` only
+when an angle changes by about 0.1° or more, so a steady arm produces almost no events. The code
+counted events per second and treated "few" as a technical failure — the steadier the arm, the
+more likely the test failed. The readiness check had the same flaw (needed 10 events in 1 s).
+**Fix:** orientation events only update "the latest angle"; a steady 50 Hz clock samples it
+(`holdResample`, unit-tested with a 3-events-in-10-s recording). A recording is rejected as
+technical only if BOTH orientation and motion events stop for `maxSensorSilenceMs` (3 s) — i.e.
+the screen went off or the app was in the background — or the clock itself was throttled.
+`sensorCheckMs` raised from 2 s to 4 s (a still phone sends its first event late).
+**Lesson for WS1/WS3:** desktop checks with synthetic 60 Hz events cannot show how real sensors
+behave; every sensor module must be run on a real phone via its dev harness before it is wired in.
+
+## D30 — Arm screen order: instruction → start button → helper note — SETTLED
+
+On a real phone the helper note pushed "Phone is on the palm — start" below the fold, behind the
+fixed bottom bar. The button now comes straight after the instruction, each phase change scrolls
+to the top, and a 4-step tracker (Place phone → Hold still → Eyes closed 10 s → Lower arm) plus
+live "Phone is flat / Arm is still" checks show what the app is waiting for. Results always list
+BOTH arms ("Left arm: not measured"), so a half-measured test is obvious.

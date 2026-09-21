@@ -72,10 +72,15 @@ export function ResultsSummary({ session }) {
           <li key={name}>
             <div className="results-head"><strong>{t(nameKey)}</strong><ResultStatus status={result.status} /></div>
             {result.message && <div>{t(result.message, result.messageVars)}</div>}
-            {arm && ["left", "right"].map((side) => {
-              if (!arm[side] || arm[side].outcome !== "measured") return null;
+            {/* Always list BOTH arms, so it is obvious which one was not measured. */}
+            {arm && arm.left && arm.right && ["left", "right"].map((side) => {
               const sideKey = "arm.side." + side;
-              return <div key={side} className="muted">{t("arm.drift", { side: t(sideKey), degrees: arm[side].A.toFixed(1) })}</div>;
+              if (arm[side].outcome === "measured") {
+                return <div key={side} className="muted">{t("arm.drift", { side: t(sideKey), degrees: arm[side].A.toFixed(1) })}</div>;
+              }
+              // A test stopped by EMERGENCY NOW never got to the arms: nothing useful to list.
+              if (result.message === "check.skippedByEmergency") return null;
+              return <div key={side} className="muted">{t("arm.notMeasured", { side: t(sideKey) })}</div>;
             })}
           </li>
         );

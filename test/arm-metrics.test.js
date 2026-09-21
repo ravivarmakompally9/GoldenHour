@@ -214,3 +214,46 @@ test("relativeSeries is relative to the start and compact", () => {
   const series = relativeSeries([{ t: 0.4, beta: 5.04, gamma: -2 }, { t: 16.7, beta: 9.56, gamma: 1.26 }], { beta: 5, gamma: -2 });
   assert.deepEqual(series, [{ t: 0, beta: 0, gamma: 0 }, { t: 17, beta: 4.6, gamma: 3.3 }]);
 });
+
+// ---------- real-phone behaviour: events only arrive when the angle CHANGES ----------
+
+import { holdResample, longestGap } from "../src/lib/tests/arm-metrics.js";
+
+test("holdResample: a perfectly still arm (almost no events) becomes a full, valid, steady recording", () => {
+  // Chrome Android fires deviceorientation only on a change of ~0.1 degree: a rock-steady arm
+  // gives a handful of events in 10 s. That must be measured as "no drift", NOT as a failure.
+  const events = [{ t: 900, beta: 3.1, gamma: -1.2 }, { t: 4200, beta: 3.2, gamma: -1.2 }, { t: 8800, beta: 3.0, gamma: -1.1 }];
+  const samples = holdResample(events, 1000, 1000 + thr.recordMs, thr.sampleStepMs);
+  assert.equal(samples.length, thr.recordMs / thr.sampleStepMs + 1);
+  assert.deepEqual(samples[0], { t: 0, beta: 3.1, gamma: -1.2 }, "the value from BEFORE the start is held");
+  assert.equal(samples.at(-1).beta, 3.0);
+
+  const m = computeArmMetrics(samples, [], thr);
+  assert.equal(m.valid, true, "a steady arm must never be rejected for being steady");
+  assert.ok(m.A < 0.5, "A should be ~0, got " + m.A);
+  assert.equal(m.dropped, false);
+  assert.equal(classifyArmTest({ left: { outcome: "measured", metrics: m }, right: { outcome: "measured", metrics: m } }, null, thr).status, "NORMAL");
+});
+
+test("holdResample: a slow sag delivered as sparse events is still measured as drift", () => {
+  const events = [{ t: 0, beta: 2, gamma: 0 }];
+  for (let k = 1; k <= 36; k++) events.push({ t: k * 270, beta: 2 + k * 0.5, gamma: 0 }); // +0.5 deg every 0.27 s = 18 deg
+  const m = computeArmMetrics(holdResample(events, 0, thr.recordMs, thr.sampleStepMs), [], thr);
+  assert.equal(m.valid, true);
+  assert.ok(m.driftBeta > 14 && m.driftBeta < 18, "drift " + m.driftBeta);
+  assert.equal(classifyArmTest({ left: { outcome: "measured", metrics: m }, right: steady() }, null, thr).status, "ABNORMAL");
+});
+
+test("holdResample: nothing known at the start gives no samples; later events start the signal", () => {
+  assert.deepEqual(holdResample([], 0, 1000, 20), []);
+  const late = holdResample([{ t: 500, beta: 1, gamma: 1 }], 0, 1000, 250);
+  assert.deepEqual(late.map((s) => s.t), [500, 750, 1000]);
+});
+
+test("longestGap finds real sensor silence (screen off, tab in background)", () => {
+  assert.equal(longestGap([100, 200, 300, 9900], 0, 10000), 9600);
+  assert.equal(longestGap([], 0, 10000), 10000);
+  assert.equal(longestGap([5, 1000, 2000, 9990], 0, 10000), 7990);
+  const busy = Array.from({ length: 600 }, (_, i) => i * 16.6);
+  assert.ok(longestGap(busy, 0, 9950) < 100);
+});
