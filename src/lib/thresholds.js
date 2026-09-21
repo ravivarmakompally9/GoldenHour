@@ -64,7 +64,11 @@ export const DEFAULT_THRESHOLDS = {
     startWindowMs: 1000,          // start angles = mean of the first 1 s
     endWindowMs: 2000,            // end angles = mean of the last 2 s
     dropAngleDeg: 45,             // any sample this far from the start angle = arm fell
-    dropAccel: 20                 // m/s^2 spike = phone dropped -> NOT_COMPLETED
+    dropAccel: 20,                // m/s^2 spike = phone dropped -> NOT_COMPLETED
+    minSamplesPerSecond: 20,      // fewer orientation samples than this = NOT_TESTED (technical)
+    sensorCheckMs: 2000,          // no orientation event within 2 s = no sensors -> NOT_TESTED
+    readyHintMs: 15000,           // still not flat+steady after 15 s -> show the "hold flatter" hint
+    restMs: 1500                  // pause after each arm ("Open your eyes and lower your arm")
   },
 
   // ---- F17 Eyes test (P2) ----

@@ -95,7 +95,9 @@ Open questions and resolved conflicts live in `docs/DECISIONS.md` — read it to
   keys — `t("home.title")` — so `test/i18n.test.js` can check them.
 - Every test module gets a standalone harness page in `dev/` (plain JS, no React — it proves the
   module is framework-free) and must work there before being wired into a screen. Open it with
-  `npm run dev` at `/goldenhour/dev/<name>.html`.
+  `npm run dev` at `/goldenhour/dev/<name>.html`. Harness pages are also built and deployed
+  (`…/dev/arm.html` on the live site) — add each new one to `build.rollupOptions.input`.
+  No simulated-sensor buttons in harness pages: results come from real hardware only.
 - Beginner-readable code: small functions and components; comments explain the *why*.
 - Storage: localStorage only, keys prefixed `gh_`, every read/write in try/catch with defaults.
   Face snapshot stays in memory only.
@@ -121,14 +123,15 @@ src/
   main.jsx  App.jsx     entry; route -> screen, demo banner, toast, update bar
   css/                  tokens.css (design tokens), styles.css (global UI rules)
   i18n/                 en.json, hi.json, te.json, index.js (bundles them)
-  state/AppState.jsx    settings + t() + toast context
-  hooks/                useHashRoute, useInstallPrompt, useScreeningTest
+  state/AppState.jsx    settings + t() + toast context  · CheckState.jsx  the check in progress
+  hooks/                useHashRoute, useInstallPrompt, useScreeningTest, useWakeLock
   pwa/                  installPrompt.js (beforeinstallprompt), useAppUpdate.js (update bar)
-  components/ui.jsx     DemoBanner, Header, Button, EmergencyNowButton, fields, StatusWord, Toast
-  screens/              one .jsx per screen S1–S18
+  components/           ui.jsx (shared pieces), icons.jsx, check.jsx (CallButton, CheckBar, ResultsSummary)
+  screens/              one .jsx per screen S1–S18; check/ holds the steps of the check flow
   lib/                  FRAMEWORK-FREE logic (no React) — unit-tested
     storage.js thresholds.js settings.js profile.js contacts.js i18n.js router.js tts.js
-    decision.js alerts.js location.js hospitals.js card.js llm.js baseline.js calibration.js
+    decision.js alerts.js location.js session.js lkw.js   (built, M2)
+    hospitals.js card.js llm.js baseline.js calibration.js  (later milestones)
     tests/              face.js, speech.js, speech-worker.js, arm.js, eyes.js, balance.js
 ```
 
@@ -138,7 +141,7 @@ All of these are plain JS in `src/lib/` (paths relative to it). Unchanged from P
 
 | Module | Exports | Returns |
 |---|---|---|
-| `tests/*.js` | `run({ mode, container, baseline, thresholds, camera })`, `abort()` | `Promise<TestResult>` |
+| `tests/*.js` | `run({ mode, container, baseline, thresholds, camera, onUpdate })`, `abort()` — the module draws only its preview/graph into `container` and reports `onUpdate(state)`; the screen renders the words (D24). `arm.js` also exports `armPlaced()`, `cannotDo()`. Maths + verdict live in a pure `*-metrics.js` file next to it. | `Promise<TestResult>`; `message` is an i18n KEY + `messageVars`; `series` is never stored |
 | `decision.js` | `decide(core, extended, emergencyNow)` | `"HIGH_ALERT"` \| `"NO_CLEAR_SIGNS"` \| `"COULD_NOT_TEST"` \| `"INCONCLUSIVE"` |
 | `alerts.js` | `startCountdown(seconds, onFire)`, `pause()`, `resume()`, `cancel()`, `buildMessage(session, contact, lang)`, `callLink(settings)`, `smsLink(phone, text)`, `waLink(phone, text)` | link strings; countdown callbacks |
 | `location.js` | `getLocation()` | `{ lat, lng, at, source: "live" \| "last" }` or `null` |
@@ -162,6 +165,9 @@ React-side contracts:
 | `useHashRoute()`, `navigate(name, params)` | current `{ name, params }`; go to `#/name/param…` |
 | `useInstallPrompt()` | `{ canInstall, installed, promptInstall() }` |
 | `useAppUpdate()` | `{ updateReady, applyUpdate() }` |
+| `useCheck()` | `{ session, startCheck(who), setLastKnownWell(lkw), conclude(results), emergencyNow() }` — `conclude` runs the rule engine, SAVES the session and navigates to `#/alert/<id>` or `#/result/<id>` |
+| `useWakeLock(active)` | keeps the screen on; re-acquired when the page becomes visible |
+| `<CheckBar>`, `<CallButton>`, `<ResultsSummary>` (`components/check.jsx`) | the only CALL button (demo number via `callLink`, never a literal), fixed bottom bar for every check screen (D26) |
 | `useScreeningTest(module)` | `{ containerRef, status, result, error, start(options), abort() }` — aborts on unmount; never invents a result (error → the screen records NOT_TESTED) |
 | Screen component | `export default function XScreen({ params })` registered in `SCREENS` in `src/App.jsx` |
 | `<EmergencyNowButton>`, `<DemoBanner>` | the single shared versions — do not re-implement |

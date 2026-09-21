@@ -1,17 +1,20 @@
 // S7 Home — one huge EMERGENCY CHECK hero, the red EMERGENCY NOW button, the setup checklist
 // and the Settings button. Designed so a panicking helper cannot miss the main action.
 
+import { useEffect, useState } from "react";
 import { useAppState } from "../state/AppState.jsx";
+import { useCheck } from "../state/CheckState.jsx";
+import { getLocation, locationPermission } from "../lib/location.js";
 import { isDemoReady } from "../lib/settings.js";
 import { getProfile, isProfileDone } from "../lib/profile.js";
 import { getContacts } from "../lib/contacts.js";
 import * as storage from "../lib/storage.js";
 import { navigate } from "../hooks/useHashRoute.js";
 import { Button, Card, EmergencyNowButton, StatusWord } from "../components/ui.jsx";
-import { IconChevron, IconPhone, IconPulse, IconSettings, IconUser, IconUsers, IconWave } from "../components/icons.jsx";
+import { IconChevron, IconPhone, IconPin, IconPulse, IconSettings, IconUser, IconUsers, IconWave } from "../components/icons.jsx";
 
 /** One checklist row: icon bubble, label, status WORD, chevron. Tap to open. */
-function ChecklistRow({ icon, label, statusText, done, onClick }) {
+function ChecklistRow({ icon, label, hint, statusText, done, onClick }) {
   return (
     <li>
       <button className="row-btn" type="button" onClick={onClick}>
@@ -19,6 +22,7 @@ function ChecklistRow({ icon, label, statusText, done, onClick }) {
         {/* Status sits UNDER the label so long Hindi/Telugu labels never get squeezed. */}
         <span className="row-main">
           <strong>{label}</strong>
+          {hint && <span className="muted small row-hint">{hint}</span>}
           <StatusWord text={statusText} done={done} />
         </span>
         <span className="row-go"><IconChevron /></span>
@@ -45,13 +49,26 @@ function ProgressRing({ done, total }) {
 }
 
 export default function HomeScreen() {
-  const { settings, t } = useAppState();
+  const { settings, t, toast } = useAppState();
+  const { emergencyNow } = useCheck();
+  const [locationState, setLocationState] = useState("unknown");   // "granted" | "denied" | "prompt" | "unknown"
+  useEffect(() => { locationPermission().then(setLocationState); }, []);
+
+  // Location is asked for HERE, during Setup, with its reason on screen — never in the middle of
+  // an emergency (PRD F12).
+  async function askLocation() {
+    if (locationState === "denied") { toast(t("home.location.blockedHelp"), 6000); return; }
+    await getLocation();
+    setLocationState(await locationPermission());
+  }
+
   const demoReady = isDemoReady(settings);
   const profileDone = isProfileDone(getProfile());
   const contactCount = getContacts().length;
   const hasBaseline = Boolean(storage.get("gh_baseline", null));
 
-  const steps = [demoReady, profileDone, contactCount > 0, hasBaseline];
+  const locationOk = locationState === "granted";
+  const steps = [demoReady, profileDone, contactCount > 0, locationOk, hasBaseline];
   const doneCount = steps.filter(Boolean).length;
   const done = t("home.status.done");
   const notSet = t("home.status.notSet");
@@ -71,16 +88,15 @@ export default function HomeScreen() {
         </button>
       </header>
 
-      {/* The emergency check (S8–S14) arrives in milestone M2. Until then both buttons open an
-          honest "not built yet" screen — the app never pretends to test anything. */}
+      {/* EMERGENCY CHECK starts the guided check; EMERGENCY NOW skips every test (rule R1). */}
       <Button
         top={<span className="beacon"><span className="beacon-core"><IconPulse /></span></span>}
         label={t("home.emergencyCheck")}
         sub={t("home.emergencyCheckHint")}
         size="huge"
-        onClick={() => navigate("soon", ["check"])}
+        onClick={() => navigate("check", ["who"])}
       />
-      <EmergencyNowButton onClick={() => navigate("soon", ["check"])} />
+      <EmergencyNowButton onClick={emergencyNow} />
 
       <Card>
         <div className="progress">
@@ -99,6 +115,14 @@ export default function HomeScreen() {
             statusText={contactCount > 0 ? t("home.status.contactsCount", { count: contactCount }) : notSet}
             done={contactCount > 0}
             onClick={() => navigate("contacts")}
+          />
+          <ChecklistRow
+            icon={<IconPin />}
+            label={t("home.check.location")}
+            hint={t("home.check.locationHint")}
+            statusText={locationOk ? t("home.status.allowed") : locationState === "denied" ? t("home.status.blocked") : notSet}
+            done={locationOk}
+            onClick={askLocation}
           />
           <ChecklistRow
             icon={<IconWave />}

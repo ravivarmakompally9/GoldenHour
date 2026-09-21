@@ -14,6 +14,7 @@ browser caches.
 | @vitejs/plugin-react | 6.1.1 | JSX (dev only) | WS0 |
 | vite-plugin-pwa | 1.3.0 | manifest + Workbox service worker (dev only) | WS0 |
 | workbox-window | 7.4.1 | service-worker registration / update prompt | WS0 |
+| chart.js | 4.5.1 | F9 live tilt graph (only line chart parts registered) | WS2 |
 
 ## Binary assets in public/ (copied as-is, precached by Workbox)
 
@@ -26,7 +27,6 @@ browser caches.
 
 | Item | Needed for | Workstream |
 | --- | --- | --- |
-| `chart.js` (npm) | F9 live tilt graph | WS2 (M2) |
 | `@mediapipe/tasks-vision` (npm) + its `wasm/` folder copied to `public/vendor/mediapipe/wasm/` at the SAME version + `public/models/face_landmarker.task` | F7 face test | WS1 (M3) |
 | `qrcode-generator`, `html2canvas` (npm) | F13 Doctor Card | WS5 (M4) |
 | `@huggingface/transformers` (npm, in a Web Worker) | F8 speech test | WS3 (M5) |
