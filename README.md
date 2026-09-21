@@ -23,7 +23,7 @@ dependencies. The repo is served as static files by GitHub Pages.
 Needs only Node.js 20 or newer (no `npm install`):
 
 ```bash
-node --test test/
+node --test
 ```
 
 ## Test a branch on your phone WITHOUT deploying
@@ -77,4 +77,4 @@ primary contact.
   API keys are typed into Settings on the phone and stay in that phone's localStorage.
 - Demo data is fictional only (for example "Lakshmi, 68").
 - Before sharing the repo link, search the code for keys and phone numbers: there must be none.
-  `node --test test/` includes a guard test for this.
+  `node --test` includes a guard test for this.

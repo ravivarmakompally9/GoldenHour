@@ -53,3 +53,16 @@ The guard unit test scans app code only: `index.html`, `sw.js`, `manifest.json`,
 are matched with digit boundaries — `(?<!\d)(\+91)?[6-9]\d{9}(?!\d)` — so long numbers inside
 URLs or IDs are not flagged. Unit tests never contain a literal mobile number; sample numbers are
 built at runtime (e.g. `"9" + "0".repeat(9)`).
+
+## D9 — Two small helper modules beyond the PRD folder list — SETTLED
+
+`js/profile.js` and `js/contacts.js` hold the pure rules for F3/F4 (required fields, max 5
+contacts, exactly one primary) so they can be unit-tested without a browser. The PRD's contract
+modules and signatures are unchanged; the screens stay in `js/screens/`. `package.json` exists only
+to mark `.js` files as ES modules for `node --test` — it has no dependencies and no build step.
+
+## D10 — Short-code blocking is wider than the PRD minimum — SETTLED
+
+PRD F2 blocks 108, 112, 100, 101, 102 and every 3–4 digit number. `validatePhone()` blocks every
+number of 6 digits or fewer (5–6 digit helplines exist too). Wider blocking cannot break a valid
+10-digit mobile, so it is the safer reading.

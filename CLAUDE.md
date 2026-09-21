@@ -134,7 +134,7 @@ Storage keys: `gh_settings`, `gh_key_gemini`, `gh_key_openrouter`, `gh_profile`,
   **Never push and never merge into `main` without asking.**
 - PRD unclear or self-conflicting → pick the safest option, record it in `docs/DECISIONS.md` with
   the reason, and tell the owner.
-- Run `node --test test/` before every commit that touches logic.
+- Run `node --test` before every commit that touches logic.
 - Never write a literal mobile number anywhere, including unit tests — build samples at runtime
   (`"9" + "0".repeat(9)`). `test/guard.test.js` fails the build on `tel:108`-style links or
   phone-like numbers in app code.

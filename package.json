@@ -1,0 +1,7 @@
+{
+  "name": "goldenhour",
+  "private": true,
+  "description": "GoldenHour PWA. No dependencies and no build step; this file only tells Node that .js files are ES modules so `node --test` works.",
+  "type": "module",
+  "scripts": { "test": "node --test" }
+}
