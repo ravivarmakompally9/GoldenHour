@@ -264,3 +264,6 @@ textarea { min-height: 96px; resize: vertical; }
 .install h1 { font-size: 40px; margin-top: 12px; }
 
 .disclaimer { font-size: 18px; color: var(--muted); border-top: 2px solid var(--line); padding-top: 12px; }
+
+/* The hidden attribute must always win, even over classes that set display. */
+[hidden] { display: none !important; }
