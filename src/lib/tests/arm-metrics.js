@@ -57,6 +57,43 @@ export function smoothOrientation(samples, alpha) {
   return out;
 }
 
+// ---------- resampling: turn "events on change" into a steady signal ----------
+
+/**
+ * Chrome on Android sends a deviceorientation event ONLY when an angle changes by about 0.1 degree
+ * or more. A perfectly steady arm therefore produces almost NO events — silence means "nothing
+ * moved", not "the sensor is broken". So we treat the sensor as sample-and-hold: between events
+ * the angle is still the last value we were told.
+ *
+ * holdResample(events, startT, endT, stepMs) returns evenly spaced samples { t, beta, gamma } with
+ * t counted from startT. `events` = [{ t, beta, gamma }] in time order; events BEFORE startT are
+ * used for the starting value (the angle the phone already had when recording began).
+ * Returns [] if no value is known yet at startT.
+ */
+export function holdResample(events, startT, endT, stepMs) {
+  const out = [];
+  let i = 0;
+  let current = null;
+  for (let t = startT; t <= endT; t += stepMs) {
+    while (i < events.length && events[i].t <= t) { current = events[i]; i += 1; }
+    if (current) out.push({ t: t - startT, beta: current.beta, gamma: current.gamma });
+  }
+  return out;
+}
+
+/** Longest silence (ms) between startT and endT, given the times ANY sensor event arrived. */
+export function longestGap(eventTimes, startT, endT) {
+  let last = startT;
+  let longest = 0;
+  for (const t of eventTimes) {
+    if (t < startT) continue;
+    if (t > endT) break;
+    longest = Math.max(longest, t - last);
+    last = t;
+  }
+  return Math.max(longest, endT - last);
+}
+
 // ---------- readiness (before recording starts) ----------
 
 /**

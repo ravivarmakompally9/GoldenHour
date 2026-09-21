@@ -232,5 +232,15 @@
   "home.status.allowed": "అనుమతించబడింది",
   "home.status.blocked": "బ్లాక్ అయింది",
   "home.location.blockedHelp": "లొకేషన్ బ్లాక్ అయింది. ఈ యాప్ కోసం Chrome సైట్ సెట్టింగ్స్‌లో అనుమతించండి.",
-  "alert.voice": "స్ట్రోక్ అయి ఉండవచ్చు. ఇప్పుడే 108 కు కాల్ చేయండి."
+  "alert.voice": "స్ట్రోక్ అయి ఉండవచ్చు. ఇప్పుడే 108 కు కాల్ చేయండి.",
+  "arm.armOf": "చేయి {n} / 2",
+  "arm.phase.place": "ఫోన్ పెట్టండి",
+  "arm.phase.hold": "కదలకుండా ఉంచండి",
+  "arm.phase.record": "కళ్లు మూసి 10 సె.",
+  "arm.phase.lower": "చేయి దించండి",
+  "arm.check.flat": "ఫోన్ ఫ్లాట్‌గా ఉంది",
+  "arm.check.steady": "చేయి కదలడం లేదు",
+  "arm.notMeasured": "{side}: కొలవలేదు",
+  "arm.ok": "సరే",
+  "arm.notYet": "ఇంకా లేదు"
 }

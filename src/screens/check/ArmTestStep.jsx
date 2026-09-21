@@ -13,6 +13,13 @@ import { notTestedResult } from "../../lib/session.js";
 import { Button } from "../../components/ui.jsx";
 import { StepLabel } from "../../components/check.jsx";
 
+const PHASE_TRACK = [
+  { key: "place", label: "arm.phase.place" },
+  { key: "hold", label: "arm.phase.hold" },
+  { key: "record", label: "arm.phase.record" },
+  { key: "lower", label: "arm.phase.lower" }
+];
+
 export default function ArmTestStep({ n, total }) {
   const { t } = useAppState();
   const { conclude } = useCheck();
@@ -33,6 +40,10 @@ export default function ArmTestStep({ n, total }) {
     if (window.confirm(t("arm.cannotDoConfirm"))) armTest.cannotDo();
   }
 
+  useEffect(() => { window.scrollTo(0, 0); }, [state.phase, state.arm]);
+
+  const trackIndex = { checking: -1, place: 0, waiting: 1, settling: 2, recording: 2, rest: 3, done: 4 }[state.phase];
+
   const instruction = {
     checking: t("arm.checkingSensors"),
     place: state.arm === "left" ? t("arm.place.left") : t("arm.place.right"),
@@ -47,17 +58,34 @@ export default function ArmTestStep({ n, total }) {
     <>
       <StepLabel n={n} total={total} />
       <h1 className="arm-label">{state.arm === "left" ? t("arm.label.left") : t("arm.label.right")}</h1>
+      <p className="arm-of">{t("arm.armOf", { n: state.arm === "left" ? 1 : 2 })}</p>
+
+      {/* Where we are inside this arm's test, so the helper always knows what comes next. */}
+      <ol className="phase-track" aria-hidden="true">
+        {PHASE_TRACK.map((item, index) => (
+          <li key={item.key} className={index < trackIndex ? "is-done" : index === trackIndex ? "is-now" : ""}>
+            <span className="phase-dot">{index < trackIndex ? "✓" : index + 1}</span>
+            <span className="phase-name">{t(item.label)}</span>
+          </li>
+        ))}
+      </ol>
+
       <p className="instruction" aria-live="assertive">{instruction}</p>
 
       {state.phase === "place" && (
         <>
-          <p className="solid-card">{t("arm.helperNote")}</p>
+          {/* The button comes BEFORE the helper note: on a real phone the note pushed it below the
+              fold, behind the bottom bar, and the helper could not find how to start. */}
           <Button label={t("arm.placedButton")} variant="primary" size="tall" onClick={() => armTest.armPlaced()} />
+          <p className="solid-card small">{t("arm.helperNote")}</p>
         </>
       )}
 
       {state.phase === "waiting" && (
         <div className="solid-card">
+          {/* Live feedback: exactly what the app is waiting for. Word + symbol, never colour alone. */}
+          <p className={"ready-check " + (state.flat ? "is-ok" : "is-wait")}><span>{t("arm.check.flat")}</span><strong>{state.flat ? "✓ " + t("arm.ok") : "… " + t("arm.notYet")}</strong></p>
+          <p className={"ready-check " + (state.steady ? "is-ok" : "is-wait")}><span>{t("arm.check.steady")}</span><strong>{state.steady ? "✓ " + t("arm.ok") : "… " + t("arm.notYet")}</strong></p>
           {!state.flat && <p><strong>{t("arm.needFlat")}</strong></p>}
           {state.flat && !state.steady && <p><strong>{t("arm.needSteady")}</strong></p>}
           {state.showHint && <p className="muted">{t("arm.readyHint")}</p>}
